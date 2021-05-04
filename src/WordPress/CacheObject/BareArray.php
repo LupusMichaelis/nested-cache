@@ -6,6 +6,8 @@ use LupusMichaelis\NestedCache\WordPress\CacheObjectInterface;
 class BareArray
 	implements CacheObjectInterface
 {
+	const default_incrementable_floor = 0;
+
 	public function __construct()
 	{
 	}
@@ -36,10 +38,11 @@ class BareArray
 
 	public function incr($key, $bump = 1, $group = self::default_group_name)
 	{
-		return isset($this->cache[$key])
-			? $this->cache[$key] += $bump
-			: $this->cache[$key] = $bump
-			;
+		$value = isset($this->cache[$key]) ? $this->cache[$key] : self::default_incrementable_floor;
+		$bump = (int) $bump;
+		$value += $bump;
+
+		return $this->cache[$key] = $value;
 	}
 
 	public function decr($key, $bump = 1, $group = self::default_group_name)

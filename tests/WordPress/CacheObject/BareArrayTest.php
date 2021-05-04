@@ -34,6 +34,26 @@ class BareArrayTest
 
 		$result = $this->cache->incr($key, 10);
 		$this->assertEquals(2 + 10, $result);
+
+		$result = $this->cache->incr($key, null);
+		$this->assertEquals(12, $result);
+
+		$result = $this->cache->incr($key, 'trotro');
+		$this->assertEquals(12, $result);
+	}
+
+	public function testDecrementWithFloor()
+	{
+		$key = 'tatayoyo';
+		$result = $this->cache->decr($key);
+
+		$this->assertEquals(0, $result);
+
+		$result = $this->cache->decr($key);
+		$this->assertEquals(0, $result);
+
+		$result = $this->cache->decr($key, 10);
+		$this->assertEquals(0, $result);
 	}
 
 	private $cache;
