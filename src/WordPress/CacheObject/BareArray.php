@@ -78,11 +78,14 @@ class BareArray
 		if(empty($group))
 			$group = self::default_group_name;
 
-		if(!isset($this->cache[$group]))
-			// Use \ArrayObject to avoid reference problems with bare array
-			$this->cache[$group] = new \ArrayObject;
+		if(!isset($this->cache[$this->blog_id]))
+			$this->cache[$this->blog_id] = [];
 
-		return $this->cache[$group];
+		if(!isset($this->cache[$this->blog_id][$group]))
+			// Use \ArrayObject to avoid reference problems with bare array
+			$this->cache[$this->blog_id][$group] = new \ArrayObject;
+
+		return $this->cache[$this->blog_id][$group];
 	}
 
 	private function get_value_or_default(string $group, $key, $default)
