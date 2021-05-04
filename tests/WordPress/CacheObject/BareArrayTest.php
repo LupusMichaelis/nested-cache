@@ -96,5 +96,19 @@ class BareArrayTest
 		$this->assertEquals(10 + 10 - 1, $result);
 	}
 
+	public function testDelete()
+	{
+		$key = 'yolo';
+
+		$result = $this->cache->incr($key, 10);
+		$this->assertEquals(10, $result);
+
+		$result = $this->cache->delete($key);
+		$this->assertTrue($result);
+
+		$result = $this->cache->incr($key, 21);
+		$this->assertEquals(21, $result);
+	}
+
 	private $cache;
 }

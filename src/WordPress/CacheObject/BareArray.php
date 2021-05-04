@@ -58,6 +58,9 @@ class BareArray
 
 	public function delete($key, $group = self::default_group_name)
 	{
+		$cache = $this->get_cache_for_group($group);
+		unset($cache[$key]);
+		return true;
 	}
 
 	public function flush()
