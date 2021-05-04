@@ -77,5 +77,24 @@ class BareArrayTest
 		$this->assertEquals(42, $result);
 	}
 
+	/**
+	 *	@testWith ["me"]
+	 *			  [null]
+	 *			  [42]
+	 */
+	public function testInrementDecrementOnGroups($group)
+	{
+		$key = 'roudoudou';
+
+		$result = $this->cache->incr($key, 10, $group);
+		$this->assertEquals(10, $result);
+
+		$result = $this->cache->incr($key, 10, $group);
+		$this->assertEquals(10 + 10, $result);
+
+		$result = $this->cache->decr($key, 1, $group);
+		$this->assertEquals(10 + 10 - 1, $result);
+	}
+
 	private $cache;
 }
