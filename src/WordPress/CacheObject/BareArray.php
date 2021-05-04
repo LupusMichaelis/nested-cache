@@ -36,6 +36,10 @@ class BareArray
 
 	public function incr($key, $bump = 1, $group = self::default_group_name)
 	{
+		return isset($this->cache[$key])
+			? $this->cache[$key] += $bump
+			: $this->cache[$key] = $bump
+			;
 	}
 
 	public function decr($key, $bump = 1, $group = self::default_group_name)
