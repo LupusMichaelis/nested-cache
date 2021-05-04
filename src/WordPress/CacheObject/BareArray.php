@@ -7,6 +7,7 @@ class BareArray
 	implements CacheObjectInterface
 {
 	const default_incrementable_floor = 0;
+	const default_value = null;
 
 	public function __construct()
 	{
@@ -14,6 +15,7 @@ class BareArray
 
 	public function get($key, string $group = self::default_group_name, bool $force = false, &$found = null)
 	{
+		return $this->get_value_or_default($group, $key, self::default_value, $found);
 	}
 
 	public function get_multi(string $groups)
@@ -71,6 +73,8 @@ class BareArray
 
 	public function close(): bool
 	{
+		$this->cache = [];
+		return true;
 	}
 
 	private function get_cache_for_group(string $group)
@@ -88,10 +92,11 @@ class BareArray
 		return $this->cache[$this->blog_id][$group];
 	}
 
-	private function get_value_or_default(string $group, $key, $default)
+	private function get_value_or_default(string $group, $key, $default, bool &$found = null)
 	{
 		$cache = $this->get_cache_for_group($group);
-		return isset($cache[$key]) ? $cache[$key] : self::default_incrementable_floor;
+		$found = isset($cache[$key]);
+		return $found ? $cache[$key] : $default;
 	}
 
 	private $blog_id = 0; ///< @property int $blog_id

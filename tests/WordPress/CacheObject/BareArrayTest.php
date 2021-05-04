@@ -100,5 +100,24 @@ class BareArrayTest
 		$this->assertEquals(21, $result);
 	}
 
+	public function testFillCloseCheck()
+	{
+		$key = 'prolo';
+
+		$result = $this->cache->incr($key, 10);
+		$this->assertEquals(10, $result);
+		$result = $this->cache->get($key);
+		$this->assertEquals(10, $result);
+
+		$this->cache->close();
+		$result = $this->cache->get($key);
+		$this->assertNull($result);
+
+		$this->cache->close();
+		$result = $this->cache->get($key, $this->cache::default_group_name, false, $success);
+		$this->assertNull($result);
+		$this->assertFalse($success);
+	}
+
 	private $cache;
 }
