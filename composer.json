@@ -1,5 +1,5 @@
 {
-    "name": "lupusmichaelis/wp-bobject-cache",
+    "name": "lupusmichaelis/wp-nested-cache",
     "description": "A collection of drop-in plugins to provide an object cache in WordPress",
     "type": "project",
     "require-dev": {

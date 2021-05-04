@@ -1,6 +1,6 @@
 <?php
 
-namespace LupusMichaelis\WordPress;
+namespace LupusMichaelis\NestedCache\WordPress;
 
 interface CacheObjectInterface
 {
