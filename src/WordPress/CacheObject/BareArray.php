@@ -65,6 +65,8 @@ class BareArray
 
 	public function flush(): bool
 	{
+		$this->cache = [];
+		return true;
 	}
 
 	public function switch_to_blog(int $blog_id): void
@@ -73,8 +75,7 @@ class BareArray
 
 	public function close(): bool
 	{
-		$this->cache = [];
-		return true;
+		return $this->flush();
 	}
 
 	private function get_cache_for_group(string $group)
