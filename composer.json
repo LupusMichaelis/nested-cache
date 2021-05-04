@@ -12,5 +12,7 @@
             "email": "m@lupusmic.org"
         }
     ],
-    "require": {}
+    "require": {
+        "ext-memcache": "4.0.5.2"
+    }
 }
