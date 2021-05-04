@@ -1,1 +1,3 @@
+.phpunit.cache
+/public/test-coverage
 /vendor/
