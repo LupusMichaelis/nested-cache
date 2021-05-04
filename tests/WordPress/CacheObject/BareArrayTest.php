@@ -119,5 +119,23 @@ class BareArrayTest
 		$this->assertFalse($success);
 	}
 
+	public function testSwitchBlogAndBack()
+	{
+		$key = 48;
+
+		$result = $this->cache->incr($key, 10);
+		$this->assertEquals(10, $result);
+		$result = $this->cache->get($key);
+		$this->assertEquals(10, $result);
+
+		$this->cache->switch_to_blog(84);
+		$result = $this->cache->get($key);
+		$this->assertNull($result);
+
+		$this->cache->switch_to_blog(0);
+		$result = $this->cache->get($key);
+		$this->assertEquals(10, $result);
+	}
+
 	private $cache;
 }

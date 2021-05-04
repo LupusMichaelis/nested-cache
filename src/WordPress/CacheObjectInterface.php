@@ -25,6 +25,6 @@ interface CacheObjectInterface
 	function delete($key, string $group = self::default_group_name): bool;
 	function flush(): bool;
 
-	function switch_to_blog(int $blog_id): void;
+	function switch_to_blog(int $blog_id): int;
 	function close(): bool;
 }

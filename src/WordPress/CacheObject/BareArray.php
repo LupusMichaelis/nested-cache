@@ -69,8 +69,9 @@ class BareArray
 		return true;
 	}
 
-	public function switch_to_blog(int $blog_id): void
+	public function switch_to_blog(int $blog_id): int
 	{
+		return $this->blog_id = $blog_id;
 	}
 
 	public function close(): bool
