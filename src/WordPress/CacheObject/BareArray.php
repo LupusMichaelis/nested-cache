@@ -47,6 +47,11 @@ class BareArray
 
 	public function decr($key, $bump = 1, $group = self::default_group_name)
 	{
+		$value = isset($this->cache[$key]) ? $this->cache[$key] : self::default_incrementable_floor;
+		$bump = (int) $bump;
+		$value -= $bump;
+
+		return $this->cache[$key] = max(self::default_incrementable_floor, $value);
 	}
 
 	public function delete($key, $group = self::default_group_name)

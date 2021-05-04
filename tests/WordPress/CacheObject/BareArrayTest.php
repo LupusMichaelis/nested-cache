@@ -54,6 +54,27 @@ class BareArrayTest
 
 		$result = $this->cache->decr($key, 10);
 		$this->assertEquals(0, $result);
+
+		$result = $this->cache->incr($key, 10);
+		$this->assertEquals(10, $result);
+
+		$result = $this->cache->decr($key);
+		$this->assertEquals(9, $result);
+
+		$result = $this->cache->decr($key, 5);
+		$this->assertEquals(4, $result);
+
+		$result = $this->cache->decr($key, 5);
+		$this->assertEquals(0, $result);
+
+		$result = $this->cache->decr($key, 'trotro');
+		$this->assertEquals(0, $result);
+
+		$result = $this->cache->incr($key, 42);
+		$this->assertEquals(42, $result);
+
+		$result = $this->cache->decr($key, 'trotro');
+		$this->assertEquals(42, $result);
 	}
 
 	private $cache;
