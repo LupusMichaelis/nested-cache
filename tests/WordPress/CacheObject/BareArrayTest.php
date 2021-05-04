@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LupusMichaelis\NestedCache\Tests\WordPress\CacheObject;
 
 use PHPUnit\Framework\TestCase;
@@ -34,12 +36,6 @@ class BareArrayTest
 
 		$result = $this->cache->incr($key, 10);
 		$this->assertEquals(2 + 10, $result);
-
-		$result = $this->cache->incr($key, null);
-		$this->assertEquals(12, $result);
-
-		$result = $this->cache->incr($key, 'trotro');
-		$this->assertEquals(12, $result);
 	}
 
 	public function testDecrementWithFloor()
@@ -67,20 +63,14 @@ class BareArrayTest
 		$result = $this->cache->decr($key, 5);
 		$this->assertEquals(0, $result);
 
-		$result = $this->cache->decr($key, 'trotro');
-		$this->assertEquals(0, $result);
-
 		$result = $this->cache->incr($key, 42);
-		$this->assertEquals(42, $result);
-
-		$result = $this->cache->decr($key, 'trotro');
 		$this->assertEquals(42, $result);
 	}
 
 	/**
-	 *	@testWith ["me"]
-	 *			  [null]
-	 *			  [42]
+	 * @testWith ["youpi"]
+	 *			 [""]
+	 *			 ["$$dsds1234566!!!!ddddssssahhhhhhhh"]
 	 */
 	public function testInrementDecrementOnGroups($group)
 	{

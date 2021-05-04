@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LupusMichaelis\NestedCache\WordPress;
 
 interface CacheObjectInterface
@@ -8,21 +10,21 @@ interface CacheObjectInterface
 	const default_expires_in = 0;
 
 	function __construct();
-	function get($key, $group = self::default_group_name, $force = false, &$found = null);
-	function get_multi($groups);
+	function get($key, string $group = self::default_group_name, bool $force = false, &$found = null);
+	function get_multi(string $groups);
 
-	function add($key, $data, $group = self::default_group_name, $expires = self::default_expires_in);
-	function add_global_groups($groups);
-	function add_non_persistent_groups($groups);
+	function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
+	function add_global_groups(string $groups): bool;
+	function add_non_persistent_groups(string $groups): bool;
 
-	function replace($key, $data, $group = self::default_group_name, $expires = self::default_expires_in);
+	function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
 
-	function incr($key, $bump = 1, $group = self::default_group_name);
-	function decr($key, $bump = 1, $group = self::default_group_name);
+	function incr($key, int $bump = 1, string $group = self::default_group_name);
+	function decr($key, int $bump = 1, string $group = self::default_group_name);
 
-	function delete($key, $group = self::default_group_name);
-	function flush();
+	function delete($key, string $group = self::default_group_name): bool;
+	function flush(): bool;
 
-	function switch_to_blog($blog_id);
-	function close();
+	function switch_to_blog(int $blog_id): void;
+	function close(): bool;
 }

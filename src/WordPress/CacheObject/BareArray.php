@@ -12,74 +12,69 @@ class BareArray
 	{
 	}
 
-	public function get($key, $group = self::default_group_name, $force = false, &$found = null)
+	public function get($key, string $group = self::default_group_name, bool $force = false, &$found = null)
 	{
 	}
 
-	public function get_multi($groups)
+	public function get_multi(string $groups)
 	{
 	}
 
-	public function add($key, $data, $group = self::default_group_name, $expires = self::default_expires_in)
+	public function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
 	}
 
-	public function add_global_groups($groups)
+	public function add_global_groups(string $groups): bool
 	{
 	}
 
-	public function add_non_persistent_groups($groups)
+	public function add_non_persistent_groups(string $groups): bool
 	{
 	}
 
-	public function replace($key, $data, $group = self::default_group_name, $expires = self::default_expires_in)
+	public function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
 	}
 
-	public function incr($key, $bump = 1, $group = self::default_group_name)
+	public function incr($key, int $bump = 1, string $group = self::default_group_name)
 	{
 		$value = $this->get_value_or_default($group, $key, self::default_incrementable_floor);
-		$bump = (int) $bump;
 		$value += $bump;
 
 		$cache = $this->get_cache_for_group($group);
 		return $cache[$key] = $value;
 	}
 
-	public function decr($key, $bump = 1, $group = self::default_group_name)
+	public function decr($key, int $bump = 1, string $group = self::default_group_name)
 	{
 		$value = $this->get_value_or_default($group, $key, self::default_incrementable_floor);
-		$bump = (int) $bump;
 		$value -= $bump;
 
 		$cache = $this->get_cache_for_group($group);
 		return $cache[$key] = max(self::default_incrementable_floor, $value);
 	}
 
-	public function delete($key, $group = self::default_group_name)
+	public function delete($key, string $group = self::default_group_name): bool
 	{
 		$cache = $this->get_cache_for_group($group);
 		unset($cache[$key]);
 		return true;
 	}
 
-	public function flush()
+	public function flush(): bool
 	{
 	}
 
-	public function switch_to_blog($blog_id)
+	public function switch_to_blog(int $blog_id): void
 	{
 	}
 
-	public function close()
+	public function close(): bool
 	{
 	}
 
-	private function get_cache_for_group($group)
+	private function get_cache_for_group(string $group)
 	{
-		if(!is_string($group))
-			$group = (string) $group;
-
 		if(empty($group))
 			$group = self::default_group_name;
 
@@ -90,11 +85,12 @@ class BareArray
 		return $this->cache[$group];
 	}
 
-	private function get_value_or_default($group, $key, $default)
+	private function get_value_or_default(string $group, $key, $default)
 	{
 		$cache = $this->get_cache_for_group($group);
 		return isset($cache[$key]) ? $cache[$key] : self::default_incrementable_floor;
 	}
 
-	private $cache = [];
+	private $blog_id = 0; ///< @property int $blog_id
+	private $cache = []; ///< @property array $cache
 }
