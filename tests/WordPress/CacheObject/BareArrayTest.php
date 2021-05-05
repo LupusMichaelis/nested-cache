@@ -199,5 +199,14 @@ class BareArrayTest
 		$this->assertFalse($success);
 	}
 
+	public function testGroupNoop()
+	{
+		$original = clone $this->cache;
+		$this->cache->add_global_groups('toto');
+		$this->assertEquals($original, $this->cache);
+		$this->cache->add_non_persistent_groups('titi');
+		$this->assertEquals($original, $this->cache);
+	}
+
 	private $cache;
 }

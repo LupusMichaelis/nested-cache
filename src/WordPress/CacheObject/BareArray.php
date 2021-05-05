@@ -36,12 +36,12 @@ class BareArray
 
 	public function add_global_groups($groups)
 	{
+		// Noop as the bare array will be freed at the end of the run
 	}
 
 	public function add_non_persistent_groups($groups)
 	{
 		// Noop as the bare array will be freed at the end of the run
-		return true;
 	}
 
 	public function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
@@ -111,6 +111,7 @@ class BareArray
 		return $found ? $cache[$key] : $default;
 	}
 
+	private $global_group_list = []; ///< @property bool[string]
 	private $blog_id = 0; ///< @property int $blog_id
 	private $cache = []; ///< @property array $cache
 }
