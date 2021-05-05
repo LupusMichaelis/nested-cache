@@ -2,6 +2,8 @@
 
 namespace LupusMichaelis\NestedCache\WordPress\CacheObject;
 use LupusMichaelis\NestedCache\WordPress\CacheObjectInterface;
+use LupusMichaelis\NestedCache\Stats;
+use LupusMichaelis\NestedCache;
 
 /**
  * @brief Use PHP's Array/ArrayObject to provide a non persistent cache
@@ -11,6 +13,7 @@ class BareArray
 {
 	public function __construct()
 	{
+		$this->stats = new Stats;
 	}
 
 	public function get($key, string $group = self::default_group_name, bool $force = false, &$found = null)
@@ -108,6 +111,11 @@ class BareArray
 		return $this->flush();
 	}
 
+	public function stats(): string
+	{
+		return (string) new Stats\Html($this->stats);
+	}
+
 	// We do what we can, but in the end, if we can't properly corece key's type, we fail
 	private function coerce_key($any)
 	{
@@ -146,6 +154,7 @@ class BareArray
 		return $found ? $cache[$key] : $default;
 	}
 
+	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
 	private $global_group_list = []; ///< @property bool[string]
 	private $blog_id = 0; ///< @property int $blog_id
 	private $cache = []; ///< @property array $cache

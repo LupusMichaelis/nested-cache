@@ -43,4 +43,6 @@ interface CacheObjectInterface
 
 	function switch_to_blog(int $blog_id): int;
 	function close(): bool;
+
+	function stats(): string;
 }

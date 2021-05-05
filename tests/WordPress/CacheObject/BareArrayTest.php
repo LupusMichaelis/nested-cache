@@ -270,5 +270,11 @@ class BareArrayTest
 			];
 	}
 
+	public function testStats()
+	{
+		$stats = $this->cache->stats();
+		$this->assertNotEmpty($stats);
+	}
+
 	private $cache;
 }
