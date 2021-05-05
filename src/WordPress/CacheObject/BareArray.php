@@ -24,6 +24,14 @@ class BareArray
 
 	public function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
+		$cache = $this->get_cache_for_group($group);
+
+		if(isset($cache[$key]))
+			return false;
+
+		$cache[$key] = is_scalar($data) ? $data : clone $data;
+
+		return true;
 	}
 
 	public function add_global_groups(string $groups): bool

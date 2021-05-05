@@ -137,5 +137,67 @@ class BareArrayTest
 		$this->assertEquals(10, $result);
 	}
 
+	/**
+	 * @testWith [12]
+	 *			 ["42"]
+	 *			 ["My not so long key"]
+	 *
+	 */
+	public function testAddScalar($value)
+	{
+		$key = 48;
+
+		$success = $this->cache->add($key, $value);
+		$this->assertTrue($success);
+		$result = $this->cache->get($key);
+		$this->assertEquals($value, $result);
+		$this->assertSame($value, $result);
+
+		$this->cache->switch_to_blog(84);
+		$result = $this->cache->get($key);
+		$this->assertNull($result);
+
+		$this->cache->switch_to_blog(0);
+		$result = $this->cache->get($key);
+		$this->assertSame($value, $result);
+
+		$success = $this->cache->add($key, 'something else');
+		$this->assertFalse($success);
+	}
+
+	public function provideAddObject(): array
+	{
+		return
+			[ [ (object) ['proA' => 'valueA'] ]
+			, [ new \ArrayObject(['first', 1, null, (object) []]) ]
+			];
+	}
+
+	/**
+	 * @dataProvider provideAddObject
+	 *
+	 */
+	public function testAddObject($value)
+	{
+		$key = 48;
+
+		$success = $this->cache->add($key, $value);
+		$this->assertTrue($success);
+		$result = $this->cache->get($key);
+		$this->assertEquals($value, $result);
+		$this->assertNotSame($value, $result);
+
+		$this->cache->switch_to_blog(84);
+		$result = $this->cache->get($key);
+		$this->assertNull($result);
+
+		$this->cache->switch_to_blog(0);
+		$result = $this->cache->get($key);
+		$this->assertNotSame($value, $result);
+
+		$success = $this->cache->add($key, 'something else');
+		$this->assertFalse($success);
+	}
+
 	private $cache;
 }
