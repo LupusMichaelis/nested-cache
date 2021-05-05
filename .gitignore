@@ -1,5 +1,4 @@
 .phpunit.cache
+/public/docs/
 /public/test-coverage
 /vendor/
-/latex/
-/html/
