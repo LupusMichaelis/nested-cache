@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace LupusMichaelis\NestedCache\WordPress;
 
@@ -21,7 +19,7 @@ interface CacheObjectInterface
 	/**
 	 * A global group is a cache that spans accross all blogs of this instance
 	 *
-	 * @param strng|string[]
+	 * @param $groups string|string[]
 	 * @return bool
 	 */
 	function add_global_groups($groups);
@@ -29,7 +27,7 @@ interface CacheObjectInterface
 	/**
 	 * Specify groups that shouldn't linger passed the end of this run
 	 *
-	 * @param strng|string[]
+	 * @param $groups string|string[]
 	 */
 	function add_non_persistent_groups($groups);
 

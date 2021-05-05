@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace LupusMichaelis\NestedCache\WordPress\CacheObject;
 use LupusMichaelis\NestedCache\WordPress\CacheObjectInterface;
