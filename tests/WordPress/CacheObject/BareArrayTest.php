@@ -208,5 +208,30 @@ class BareArrayTest
 		$this->assertEquals($original, $this->cache);
 	}
 
+	/**
+	 * @testWith ["mykey", 42]
+	 */
+	public function testReplaceNonExistent($key, $replacement)
+	{
+		$success = $this->cache->replace($key, $replacement);
+		$this->assertFalse($success);
+	}
+
+
+	/**
+	 * @testWith ["mykey", 42, 85]
+	 */
+	public function testSuccessfulReplace($key, $original, $replacement)
+	{
+		$success = $this->cache->add($key, $original);
+		$this->assertTrue($success);
+		$result = $this->cache->get($key);
+		$this->assertEquals($original, $result);
+		$succes = $this->cache->replace($key, $replacement);
+		$this->assertTrue($success);
+		$result = $this->cache->get($key);
+		$this->assertEquals($replacement, $result);
+	}
+
 	private $cache;
 }
