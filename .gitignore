@@ -1,3 +1,5 @@
 .phpunit.cache
 /public/test-coverage
 /vendor/
+/latex/
+/html/

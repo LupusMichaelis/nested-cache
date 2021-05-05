@@ -1,5 +1,10 @@
 FROM lupusmichaelis/alpine-php7-composer:1.0.5
 
 USER 0
-RUN apk add php7-memcache php7-xdebug
+RUN apk add \
+	php7-memcache \
+	php7-xdebug \
+	doxygen \
+	&& echo Apk done
+
 RUN sed -i '/^;zend/s/;//' /etc/php7/conf.d/xdebug.ini

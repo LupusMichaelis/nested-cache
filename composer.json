@@ -20,7 +20,8 @@
     "scripts": {
         "test": "phpunit ./tests",
         "test-verbose": "@test -vvv",
-        "test-coverage": "@test --coverage-html ./public/test-coverage"
+        "test-coverage": "@test --coverage-html ./public/test-coverage",
+        "doc": "doxygen"
     },
     "autoload": {
         "psr-4": {
