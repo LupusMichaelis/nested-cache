@@ -14,8 +14,8 @@ interface CacheObjectInterface
 	function get_multi(string $groups);
 
 	function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
-	function add_global_groups(string $groups): bool;
-	function add_non_persistent_groups(string $groups): bool;
+	function add_global_groups(array $groups): bool;
+	function add_non_persistent_groups(array $groups): bool;
 
 	function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
 

@@ -34,11 +34,11 @@ class BareArray
 		return true;
 	}
 
-	public function add_global_groups(string $groups): bool
+	public function add_global_groups(array $groups): bool
 	{
 	}
 
-	public function add_non_persistent_groups(string $groups): bool
+	public function add_non_persistent_groups(array $groups): bool
 	{
 	}
 
