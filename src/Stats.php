@@ -25,6 +25,12 @@ class Stats
 		return $this->hits;
 	}
 
+	public function reset(): void
+	{
+		$this->misses = 0;
+		$this->hits = 0;
+	}
+
 	private $misses = 0; ///< @property int $misses
 	private $hits = 0; ///< @property int $hits
 }

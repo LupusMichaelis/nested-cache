@@ -8,4 +8,5 @@ interface StatsInterface
 	function increment_hits(): void;
 	function get_misses(): int;
 	function get_hits(): int;
+	function reset(): void;
 }
