@@ -3,12 +3,12 @@
 namespace LupusMichaelis\NestedCache\WordPress\CacheObject;
 use LupusMichaelis\NestedCache\WordPress\CacheObjectInterface;
 
+/**
+ * @brief Use PHP's Array/ArrayObject to provide a non persistent cache
+ */
 class BareArray
 	implements CacheObjectInterface
 {
-	const default_incrementable_floor = 0;
-	const default_value = null;
-
 	public function __construct()
 	{
 	}

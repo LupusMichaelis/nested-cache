@@ -6,8 +6,10 @@ namespace LupusMichaelis\NestedCache\WordPress;
 
 interface CacheObjectInterface
 {
-	const default_group_name = 'default';
 	const default_expires_in = 0;
+	const default_group_name = 'default';
+	const default_incrementable_floor = 0;
+	const default_value = null;
 
 	function __construct();
 	function get($key, string $group = self::default_group_name, bool $force = false, &$found = null);
