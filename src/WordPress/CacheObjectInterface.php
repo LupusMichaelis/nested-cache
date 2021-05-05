@@ -11,11 +11,23 @@ interface CacheObjectInterface
 
 	function __construct();
 	function get($key, string $group = self::default_group_name, bool $force = false, &$found = null);
-	function get_multi(string $groups);
+	function get_multiple($keys, $group = self::default_group_name, bool $force = false): array;
 
 	function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
-	function add_global_groups(array $groups): bool;
-	function add_non_persistent_groups(array $groups): bool;
+
+	/**
+	 * A global group is a cache that spans accross all blogs of this instance
+	 * @param strng|string[]
+	 * @return bool
+	 */
+	function add_global_groups($groups);
+
+	/**
+	 * Specify groups that shouldn't linger passed the end of this run
+	 *
+	 * @param strng|string[]
+	 */
+	function add_non_persistent_groups($groups);
 
 	function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
 

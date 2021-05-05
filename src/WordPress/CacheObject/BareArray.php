@@ -18,7 +18,7 @@ class BareArray
 		return $this->get_value_or_default($group, $key, self::default_value, $found);
 	}
 
-	public function get_multi(string $groups)
+	public function get_multiple($keys, $group = self::default_group_name, bool $force = false): array
 	{
 	}
 
@@ -34,12 +34,14 @@ class BareArray
 		return true;
 	}
 
-	public function add_global_groups(array $groups): bool
+	public function add_global_groups($groups)
 	{
 	}
 
-	public function add_non_persistent_groups(array $groups): bool
+	public function add_non_persistent_groups($groups)
 	{
+		// Noop as the bare array will be freed at the end of the run
+		return true;
 	}
 
 	public function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
