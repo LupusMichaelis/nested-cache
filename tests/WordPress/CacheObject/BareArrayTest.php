@@ -233,5 +233,12 @@ class BareArrayTest
 		$this->assertEquals($replacement, $result);
 	}
 
+	public function testMultiple()
+	{
+		$key_list = range(1, 10);
+		$result = $this->cache->get_multiple($key_list);
+		$this->assertCount(count($key_list), $result);
+	}
+
 	private $cache;
 }

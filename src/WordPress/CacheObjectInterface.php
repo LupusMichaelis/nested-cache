@@ -13,13 +13,14 @@ interface CacheObjectInterface
 
 	function __construct();
 	function get($key, string $group = self::default_group_name, bool $force = false, &$found = null);
-	function get_multiple($keys, $group = self::default_group_name, bool $force = false): array;
+	function get_multiple(array $keys, $group = self::default_group_name, bool $force = false): array;
 
 	function set($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
 	function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
 
 	/**
 	 * A global group is a cache that spans accross all blogs of this instance
+	 *
 	 * @param strng|string[]
 	 * @return bool
 	 */

@@ -18,8 +18,9 @@ class BareArray
 		return $this->get_value_or_default($group, $key, self::default_value, $found);
 	}
 
-	public function get_multiple($keys, $group = self::default_group_name, bool $force = false): array
+	public function get_multiple(array $keys, $group = self::default_group_name, bool $force = false): array
 	{
+		return array_map(function($key) use(&$group, &$force) { return $this->get($key, $group, $force); }, $keys);
 	}
 
 	public function set($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
