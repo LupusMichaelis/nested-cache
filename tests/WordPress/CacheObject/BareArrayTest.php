@@ -233,11 +233,41 @@ class BareArrayTest
 		$this->assertEquals($replacement, $result);
 	}
 
-	public function testMultiple()
+	public function testGetMultiple()
 	{
 		$key_list = range(1, 10);
 		$result = $this->cache->get_multiple($key_list);
 		$this->assertCount(count($key_list), $result);
+	}
+
+	/**
+	 * @dataProvider provideGet
+	 */
+	public function testGet($key, $value)
+	{
+		$returned = $this->cache->get($key);
+		$this->assertNull($returned);
+
+		$this->cache->add($key, $value);
+		$result = $this->cache->get($key);
+		$this->assertEquals($value, $result);
+		$this->assertSame($value, $result);
+	}
+
+	public function provideGet()
+	{
+		return
+			[ ["mykey", "value"]
+			, [ ['no' => 'good'], "some"]
+			,
+				[ $this->createStub(\jsonserializable::class)
+				, 'my key\'s name\'s JSON'
+				]
+			,
+				[ new \stdclass
+				, 'This makes no sense'
+				]
+			];
 	}
 
 	private $cache;

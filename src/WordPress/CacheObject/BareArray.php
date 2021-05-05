@@ -26,6 +26,7 @@ class BareArray
 	public function set($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
 		$cache = $this->get_cache_for_group($group);
+		$key = $this->coerce_key($key);
 		$cache[$key] = is_scalar($data) ? $data : clone $data;
 
 		return true;
@@ -35,6 +36,7 @@ class BareArray
 	{
 		$cache = $this->get_cache_for_group($group);
 
+		$key = $this->coerce_key($key);
 		if(isset($cache[$key]))
 			return false;
 
@@ -55,6 +57,7 @@ class BareArray
 	{
 		$cache = $this->get_cache_for_group($group);
 
+		$key = $this->coerce_key($key);
 		if(!isset($cache[$key]))
 			return false;
 
@@ -67,6 +70,7 @@ class BareArray
 		$value += $bump;
 
 		$cache = $this->get_cache_for_group($group);
+		$key = $this->coerce_key($key);
 		return $cache[$key] = $value;
 	}
 
@@ -76,12 +80,14 @@ class BareArray
 		$value -= $bump;
 
 		$cache = $this->get_cache_for_group($group);
+		$key = $this->coerce_key($key);
 		return $cache[$key] = max(self::default_incrementable_floor, $value);
 	}
 
 	public function delete($key, string $group = self::default_group_name): bool
 	{
 		$cache = $this->get_cache_for_group($group);
+		$key = $this->coerce_key($key);
 		unset($cache[$key]);
 		return true;
 	}
@@ -102,6 +108,21 @@ class BareArray
 		return $this->flush();
 	}
 
+	// We do what we can, but in the end, if we can't properly corece key's type, we fail
+	private function coerce_key($any)
+	{
+		if(is_numeric($any) || is_string($any))
+			return $any;
+
+		if($any instanceof \jsonserializable)
+			return json_encode($any);
+
+		if(is_object($any) && method_exists($any, '__tostring'))
+			return (string) $any;
+
+		return \serialize($any);
+	}
+
 	private function get_cache_for_group(string $group)
 	{
 		if(empty($group))
@@ -119,6 +140,7 @@ class BareArray
 
 	private function get_value_or_default(string $group, $key, $default, bool &$found = null)
 	{
+		$key = $this->coerce_key($key);
 		$cache = $this->get_cache_for_group($group);
 		$found = isset($cache[$key]);
 		return $found ? $cache[$key] : $default;
