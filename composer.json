@@ -25,10 +25,14 @@
             "@composer dump-autoload",
             "php -dphar.readonly=0 ./bin/build.php"
         ],
+        "build-release": [
+            "@composer install --no-dev",
+            "@composer dump-autoload --no-dev -o -n",
+            "php -dphar.readonly=0 ./bin/build.php"
+        ],
         "doc": "doxygen",
         "dev": [
             "@test-coverage",
-            "@build",
             "@doc"
         ]
     },
