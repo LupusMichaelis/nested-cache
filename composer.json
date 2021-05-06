@@ -23,12 +23,12 @@
         "test-coverage": "@test --coverage-html ./public/test-coverage",
         "build": [
             "@composer dump-autoload",
-            "php -dphar.readonly=0 ./bin/build.php"
+            "php -dphar.readonly=0 ./bin/build-phar.php"
         ],
         "build-release": [
             "@composer install --no-dev",
             "@composer dump-autoload --no-dev -o -n",
-            "php -dphar.readonly=0 ./bin/build.php"
+            "@build"
         ],
         "doc": "doxygen",
         "dev": [

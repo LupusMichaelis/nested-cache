@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+
+declare -r envfile='.env'
+declare -r devimage=wpsmd
+declare -r buildimage=wpsmb
+
+session-main()
+{
+	session-docker "$@"
+}
+
+session-docker()
+{
+	docker run -it --rm --env-file "$envfile" -v$PWD:/home/anvil "$devimage" "$@"
+}
+
+session-main "$@"

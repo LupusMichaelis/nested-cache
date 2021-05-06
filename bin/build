@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+declare -r envfile='.env'
+declare -r devimage=wpsmd
+declare -r buildimage=wpsmb
+
+build-main()
+{
+	case "$1" in
+		init)
+			{
+				echo LP_DEV_GID=$(id -g)
+				echo LP_DEV_UID=$(id -u)
+				echo LP_DEV_USER_ALIAS=$(id -un)
+				echo BUILD_DOCKER_IMAGE="$buildimage"
+				echo DEV_DOCKER_IMAGE="$devimage"
+			} > "$envfile"
+			;;
+		release)
+			docker build -t "$buildimage" -f Dockerfile-build .
+			docker run \
+				--rm --env-file "$envfile" \
+				-v$PWD/build:/home/anvil/build "$buildimage"
+			;;
+		dev)
+			docker build -t "$devimage" -f Dockerfile-dev .
+			;;
+
+		*)
+			echo "$0" '[init|release|dev]'
+	esac
+}
+
+build-main "$@"
