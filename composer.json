@@ -21,9 +21,14 @@
         "test": "phpunit ./tests",
         "test-verbose": "@test -vvv",
         "test-coverage": "@test --coverage-html ./public/test-coverage",
+        "build": [
+            "@composer dump-autoload",
+            "php -dphar.readonly=0 ./bin/build.php"
+        ],
         "doc": "doxygen",
         "dev": [
             "@test-coverage",
+            "@build",
             "@doc"
         ]
     },
