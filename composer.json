@@ -21,7 +21,11 @@
         "test": "phpunit ./tests",
         "test-verbose": "@test -vvv",
         "test-coverage": "@test --coverage-html ./public/test-coverage",
-        "doc": "doxygen"
+        "doc": "doxygen",
+        "dev": [
+            "@test-coverage",
+            "@doc"
+        ]
     },
     "autoload": {
         "psr-4": {
