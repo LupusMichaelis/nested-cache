@@ -23,6 +23,23 @@ interface CacheObjectInterface
 	function switch_to_blog(int $blog_id): int;
 
 	/**
+	 * A global group is a cache that spans accross all blogs of this instance
+	 *
+	 * @see https://developer.wordpress.org/reference/classes/wp_object_cache/add_global_groups/
+	 *
+	 * @param $groups string|string[]
+	 * @return bool
+	 */
+	function add_global_groups($groups): void;
+
+	/**
+	 * Specify groups that shouldn't linger passed the run
+	 *
+	 * @param $groups string|string[]
+	 */
+	function add_non_persistent_groups($groups): void;
+
+	/**
 	 * Get the value
 	 *
 	 * @see https://developer.wordpress.org/reference/classes/wp_object_cache/get/
@@ -70,23 +87,6 @@ interface CacheObjectInterface
 	 * @return bool	If they were no value for $key, the function succeeds and returns true, false otherwise
 	 */
 	function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
-
-	/**
-	 * A global group is a cache that spans accross all blogs of this instance
-	 *
-	 * @see https://developer.wordpress.org/reference/classes/wp_object_cache/add_global_groups/
-	 *
-	 * @param $groups string|string[]
-	 * @return bool
-	 */
-	function add_global_groups($groups): void;
-
-	/**
-	 * Specify groups that shouldn't linger passed the run
-	 *
-	 * @param $groups string|string[]
-	 */
-	function add_non_persistent_groups($groups): void;
 
 	/**
 	 * @see https://developer.wordpress.org/reference/classes/wp_object_cache/add_non_persistent_groups/
