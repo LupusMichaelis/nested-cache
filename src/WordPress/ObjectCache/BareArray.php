@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace LupusMichaelis\NestedCache\WordPress\CacheObject;
-use LupusMichaelis\NestedCache\WordPress\CacheObjectInterface;
+namespace LupusMichaelis\NestedCache\WordPress\ObjectCache;
+use LupusMichaelis\NestedCache\WordPress\ObjectCacheInterface;
 use LupusMichaelis\NestedCache\Stats;
 use LupusMichaelis\NestedCache;
 
@@ -9,7 +9,7 @@ use LupusMichaelis\NestedCache;
  * Use PHP's Array and ArrayObject to provide a non persistent cache
  */
 class BareArray
-	implements CacheObjectInterface
+	implements ObjectCacheInterface
 {
 	public function __construct()
 	{

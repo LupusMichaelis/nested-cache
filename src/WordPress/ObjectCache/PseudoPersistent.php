@@ -2,6 +2,8 @@
 
 namespace LupusMichaelis\NestedCache\WordPress\ObjectCache;
 
+use LupusMichaelis\NestedCache\WordPress\ObjectCacheInterface;
+
 /**
  * A fake persistent cacher
  */

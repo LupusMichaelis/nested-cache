@@ -1,11 +1,15 @@
 <?php declare(strict_types=1);
 
+#wp_cache_init();
+
+#var_dump($wp_object_cache);
+
 function wp_cache_init()
 {
 	global $wp_object_cache;
 
 	$loader = require_once __DIR__ . '/../vendor/autoload.php';
-	$wp_object_cache = new \LupusMichaelis\NestedCache\WordPress\CacheObject\BareArray;
+	$wp_object_cache = new \LupusMichaelis\NestedCache\WordPress\ObjectCache\BareArray;
 }
 
 function wp_cache_switch_to_blog()

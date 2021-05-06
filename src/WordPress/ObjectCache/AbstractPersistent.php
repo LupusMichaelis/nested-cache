@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace LupusMichaelis\NestedCache\WordPress\CacheObject;
-use LupusMichaelis\NestedCache\WordPress\CacheObjectInterface;
+namespace LupusMichaelis\NestedCache\WordPress\ObjectCache;
+use LupusMichaelis\NestedCache\WordPress\ObjectCacheInterface;
 
 /**
  * Implement base logic of persistent caching
  */
 abstract class AbstractPersistent
-	implements CacheObjectInterface
+	implements ObjectCacheInterface
 {
 	abstract public function get($key, string $group = self::default_group_name, bool $force = false, &$found = null);
 	abstract public function get_multiple(array $keys, $group = self::default_group_name, bool $force = false): array;

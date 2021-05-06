@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace LupusMichaelis\NestedCache\Tests\WordPress\CacheObject;
+namespace LupusMichaelis\NestedCache\Tests\WordPress\ObjectCache;
 
 use PHPUnit\Framework\TestCase;
 
@@ -9,7 +9,7 @@ class BareArrayTest
 {
 	public function setUp(): void
 	{
-		$this->cache = new \LupusMichaelis\NestedCache\WordPress\CacheObject\BareArray;
+		$this->cache = new \LupusMichaelis\NestedCache\WordPress\ObjectCache\BareArray;
 	}
 
 	public function tearDown(): void
@@ -19,7 +19,7 @@ class BareArrayTest
 
 	public function testInstantiate()
 	{
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\WordPress\CacheObjectInterface::class, $this->cache);
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\WordPress\ObjectCacheInterface::class, $this->cache);
 	}
 
 	public function testIncrement()

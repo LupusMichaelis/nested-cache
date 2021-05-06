@@ -8,7 +8,7 @@ namespace LupusMichaelis\NestedCache\WordPress;
  * @todo determine WordPress version this interface is compatible with
  * @see https://developer.wordpress.org/reference/classes/wp_object_cache/
  */
-interface CacheObjectInterface
+interface ObjectCacheInterface
 {
 	const default_expires_in = 0; ///< int Life time in second of the key, 0 is for never
 	const default_group_name = 'default'; ///< string
