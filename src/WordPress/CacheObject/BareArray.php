@@ -6,7 +6,7 @@ use LupusMichaelis\NestedCache\Stats;
 use LupusMichaelis\NestedCache;
 
 /**
- * @brief Use PHP's Array/ArrayObject to provide a non persistent cache
+ * Use PHP's Array and ArrayObject to provide a non persistent cache
  */
 class BareArray
 	implements CacheObjectInterface
@@ -46,12 +46,12 @@ class BareArray
 		return $this->set($key, $data, $group, $expires);
 	}
 
-	public function add_global_groups($groups)
+	public function add_global_groups($groups): void
 	{
 		// Noop as the bare array will be freed at the end of the run
 	}
 
-	public function add_non_persistent_groups($groups)
+	public function add_non_persistent_groups($groups): void
 	{
 		// Noop as the bare array will be freed at the end of the run
 	}
