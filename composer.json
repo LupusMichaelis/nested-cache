@@ -35,9 +35,9 @@
     "autoload": {
         "psr-4": {
             "LupusMichaelis\\NestedCache\\": "src/"
-        },
-        "autoload-dev": {
-            "psr-4": { "LupusMichaelis\\NestedCache\\Tests\\": "tests/" }
         }
+    },
+    "autoload-dev": {
+        "psr-4": { "LupusMichaelis\\NestedCache\\Tests\\": "tests/" }
     }
 }
