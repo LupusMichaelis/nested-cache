@@ -16,6 +16,11 @@ class BareArray
 		$this->stats = new Stats;
 	}
 
+	public function __destruct()
+	{
+		$this->close();
+	}
+
 	public function get($key, string $group = self::default_group_name, bool $force = false, &$found = null)
 	{
 		return $this->get_value_or_default($group, $key, self::default_value, $found);
@@ -108,6 +113,8 @@ class BareArray
 
 	public function close(): bool
 	{
+		// Beware! We're flushing because of implementation details. Emptying the array
+		// is equivalent to shutting the link to the array in this case.
 		return $this->flush();
 	}
 

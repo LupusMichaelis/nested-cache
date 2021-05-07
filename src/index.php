@@ -98,5 +98,6 @@ function wp_cache_flush()
 function wp_cache_close()
 {
 	global $wp_object_cache;
-	return $wp_object_cache->close();
+	$wp_object_cache = null;
+	return true;
 }
