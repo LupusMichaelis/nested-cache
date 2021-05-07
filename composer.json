@@ -38,6 +38,7 @@
         ],
         "doc": "doxygen",
         "dev": [
+            "@composer install --dev",
             "@test-coverage",
             "@doc"
         ]

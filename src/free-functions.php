@@ -2,6 +2,12 @@
 
 namespace LupusMichaelis\NestedCache;
 
+/**
+ * @param $that object
+ * @param $function_name string
+ * @param $values &array
+ * @return array[mixed]
+ */
 function method_parameters_as_map(object $that, string $function_name, array & $values)
 {
 	$object_glimpse = new \ReflectionClass($that);
