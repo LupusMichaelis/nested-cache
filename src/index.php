@@ -40,7 +40,7 @@ function wp_cache_get()
 	return call_user_func_array([$wp_object_cache, 'get'], $args);
 }
 
-function wp_cache_get_multi()
+function wp_cache_get_multiple()
 {
 	global $wp_object_cache;
 	$args = func_get_args();
