@@ -21,4 +21,13 @@ class AbstractPersistentTest
 	{
 		$this->assertInstanceOf(\LupusMichaelis\NestedCache\WordPress\ObjectCache\AbstractPersistent::class, $this->cache);
 	}
+
+	public function testGroup()
+	{
+		$this->cache->add_global_groups('yolo');
+		$this->cache->add_non_persistent_groups('yolo');
+
+		/// @todo assert internal state of $this->cache after group addition
+		$this->assertTrue(true);
+	}
 }

@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 namespace LupusMichaelis\NestedCache\WordPress\ObjectCache;
+
 use LupusMichaelis\NestedCache\WordPress\ObjectCacheInterface;
 
 /**
