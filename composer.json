@@ -42,6 +42,9 @@
         ]
     },
     "autoload": {
+        "files": [
+            "src/free-functions.php"
+        ],
         "psr-4": {
             "LupusMichaelis\\NestedCache\\": "src/"
         }
