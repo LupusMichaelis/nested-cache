@@ -4,7 +4,8 @@
     "type": "project",
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "ext-xdebug": "^2.9"
+        "ext-xdebug": "^2.9",
+        "spatie/phpunit-watcher": "^1.23"
     },
     "license": "LGPL-3.0-or-later",
     "authors": [
@@ -18,6 +19,10 @@
         "php": "^7.3"
     },
     "scripts": {
+        "jon": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit-watcher watch ./tests --coverage-html ./public/test-coverage < /dev/tty"
+        ],
         "test": "phpunit ./tests",
         "test-verbose": "@test -vvv",
         "test-coverage": "@test --coverage-html ./public/test-coverage",
