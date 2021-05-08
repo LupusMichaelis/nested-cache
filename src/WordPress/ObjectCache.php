@@ -20,7 +20,19 @@ class ObjectCache
 
 	public function get($key, string $group = self::default_group_name, bool $force = false, &$found = null)
 	{
-		return $this->get_value_or_default($group, $key, self::default_value, $found);
+		$key = $this->make_key($key, $group);
+
+		try
+		{
+			$value = $this->keeper->get($key);
+		}
+		catch(LMNC\NotFound $e)
+		{
+			$value = self::default_value;
+			$found = false;
+		}
+
+		return $value;
 	}
 
 	public function get_multiple(array $keys, $group = self::default_group_name, bool $force = false): array
@@ -33,82 +45,79 @@ class ObjectCache
 
 	public function set($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
-		$cache = $this->get_cache_for_group($group);
-		$key = $this->coerce_key($key);
-		$cache[$key] = is_scalar($data) ? $data : clone $data;
+		$key = $this->make_key($key, $group);
+
+		$this->keeper->set($key, $data);
 
 		return true;
 	}
 
 	public function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
-		$cache = $this->get_cache_for_group($group);
+		$key = $this->make_key($key, $group);
 
-		$key = $this->coerce_key($key);
-		if(isset($cache[$key]))
+		try
+		{
+			$this->keeper->add($key, $data);
+			return true;
+		}
+		catch(LMNC\AlreadyCached $e)
+		{
 			return false;
-
-		return $this->set($key, $data, $group, $expires);
+		}
 	}
 
 	public function add_global_groups($groups): void
 	{
 		$groups = (array) $groups;
-
 		foreach($groups as $group)
-			$this->global_group_list[(string) $group] = true;
+			$this->keeper->add_group($group, true);
 	}
 
 	public function add_non_persistent_groups($groups): void
 	{
 		$groups = (array) $groups;
-
 		foreach($groups as $group)
-			$this->non_persistent_group_list[(string) $group] = true;
+			$this->keeper->add_group($group, false);
 	}
 
 	public function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
 	{
-		$cache = $this->get_cache_for_group($group);
+		$key = $this->make_key($key, $group);
 
-		$key = $this->coerce_key($key);
-		if(!isset($cache[$key]))
+		try
+		{
+			$this->keeper->replace($key, $data);
+			return true;
+		}
+		catch(LMNC\NotFound $e)
+		{
 			return false;
-
-		return $this->set($key, $data, $group, $expires);
+		}
 	}
 
 	public function incr($key, int $bump = 1, string $group = self::default_group_name)
 	{
-		$value = $this->get_value_or_default($group, $key, self::default_incrementable_floor);
-		$value += $bump;
-
-		$cache = $this->get_cache_for_group($group);
-		$key = $this->coerce_key($key);
-		return $cache[$key] = $value;
+		$key = $this->make_key($key, $group);
+		return $this->keeper->increment($key, $bump);
 	}
 
 	public function decr($key, int $bump = 1, string $group = self::default_group_name)
 	{
-		$value = $this->get_value_or_default($group, $key, self::default_incrementable_floor);
-		$value -= $bump;
-
-		$cache = $this->get_cache_for_group($group);
-		$key = $this->coerce_key($key);
-		return $cache[$key] = max(self::default_incrementable_floor, $value);
+		$key = $this->make_key($key, $group);
+		return $this->keeper->decrement($key, $bump);
 	}
 
 	public function delete($key, string $group = self::default_group_name): bool
 	{
-		$cache = $this->get_cache_for_group($group);
-		$key = $this->coerce_key($key);
-		unset($cache[$key]);
+		$key = $this->make_key($key, $group);
+		$this->keeper->delete($key);
 		return true;
 	}
 
 	public function flush(): bool
 	{
-		$this->cache = [];
+		$this->keeper->flush();
 		return true;
 	}
 
@@ -130,11 +139,19 @@ class ObjectCache
 		return (string) new LMNC\Stats\Html($this->keeper->get_stats());
 	}
 
+	private function make_key($key, $group)
+	{
+		$key = $this->coerce_key($key);
+		$key = $this->key_maker->make($key, $group);
+
+		return $key;
+	}
+
 	// We do what we can, but in the end, if we can't properly corece key's type, we fail
 	private function coerce_key($any)
 	{
 		if(is_numeric($any) || is_string($any))
-			return $any;
+			return (string) $any;
 
 		if($any instanceof \jsonserializable)
 			return json_encode($any);
@@ -145,33 +162,6 @@ class ObjectCache
 		return \serialize($any);
 	}
 
-	private function get_cache_for_group(string $group)
-	{
-		if(empty($group))
-			$group = self::default_group_name;
-
-		if(!isset($this->cache[$this->key_maker->get_blog_id()]))
-			$this->cache[$this->key_maker->get_blog_id()] = [];
-
-		if(!isset($this->cache[$this->key_maker->get_blog_id()][$group]))
-			// Use \ArrayObject to avoid reference problems with bare array
-			$this->cache[$this->key_maker->get_blog_id()][$group] = new \ArrayObject;
-
-		return $this->cache[$this->key_maker->get_blog_id()][$group];
-	}
-
-	private function get_value_or_default(string $group, $key, $default, bool &$found = null)
-	{
-		$key = $this->coerce_key($key);
-		$cache = $this->get_cache_for_group($group);
-		$found = isset($cache[$key]);
-		return $found ? $cache[$key] : $default;
-	}
-
 	private $key_maker; ///< @property \LupusMichaelis\NestedCache\Key\Maker
 	private $keeper; ///< @property \LupusMichaelis\NestedCache\KeeperInterface
-
-	private $non_persistent_group_list = []; ///< @property bool[string]
-	private $global_group_list = []; ///< @property bool[string]
-	private $cache = []; ///< @property array $cache
 }
