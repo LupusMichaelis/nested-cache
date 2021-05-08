@@ -38,4 +38,20 @@ class MakerTest
 		$this->assertEquals(68, $this->key_maker->get_blog_id());
 		$this->assertEquals('burglars', $this->key_maker->get_group());
 	}
+
+	public function testChangeBlog()
+	{
+		$this->key_maker->set_blog_id(68);
+		$this->assertEquals(68, $this->key_maker->get_blog_id());
+		$this->assertEquals('bandit', $this->key_maker->get_group());
+
+		$this->key_maker->set_blog_id(31);
+		$this->assertEquals(31, $this->key_maker->get_blog_id());
+		$this->assertEquals('bandit', $this->key_maker->get_group());
+
+		$key = $this->key_maker->make('round me up');
+		$this->assertEquals($key->get_name(), 'round me up');
+		$this->assertEquals($key->get_group(), 'bandit');
+		$this->assertEquals($key->get_blog_id(), 31);
+	}
 }

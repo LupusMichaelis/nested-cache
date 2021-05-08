@@ -143,6 +143,7 @@ class ObjectCache
 	private function make_key($key, $group)
 	{
 		$key = $this->coerce_key($key);
+		$group = empty($group) ? self::default_group_name : $group;
 		$key = $this->key_maker->make($key, $group);
 
 		return $key;

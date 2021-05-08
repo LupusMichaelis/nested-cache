@@ -6,13 +6,9 @@ class ObjectCacheKeeper
 	implements KeeperInterface
 	, ObjectCacheInterface
 {
-	public function __construct()
-	{
-	}
-
 	public function get_stats(): StatsInterface
 	{
-		$stat_list = $this->iterate_caches(function($c) {$c->get_stats();});
+		$stat_list = $this->iterate_caches(function($c) {return $c->get_stats();});
 		$stats = new Stats\BareArray;
 
 		return array_reduce
@@ -30,14 +26,24 @@ class ObjectCacheKeeper
 	public function add_group(string $name, bool $is_persistent): void
 	{
 		if($is_persistent)
+		{
+			$do_migrate = isset($this->non_persistent_group_list[(string) $name]);
+			unset($this->non_persistent_group_list[(string) $name]);
 			$this->persistent_group_list[(string) $name] = true;
+		}
 		else
+		{
+			$do_migrate = isset($this->persistent_group_list[(string) $name]);
+			unset($this->persistent_group_list[(string) $name]);
 			$this->non_persistent_group_list[(string) $name] = true;
+		}
+
+		$do_migrate and $this->migrate_group($name);
 	}
 
 	public function set_persistent_cache_class(string $class_name): void
 	{
-		$this->peristent_cache_class = $class_name;
+		$this->persistent_cache_class = $class_name;
 	}
 
 	public function get(Key\Cut $key)
@@ -89,12 +95,19 @@ class ObjectCacheKeeper
 
 	private function iterate_caches($callback): array
 	{
-		return array_map
-			( function (array $g) use(&$callback)
+		return array_reduce
+			( array_map
+				( function (array $g) use(&$callback)
+					{
+						return array_map($callback, $g);
+					}
+				, $this->cache_list
+				)
+			, function (array $out, array $in)
 				{
-					array_map($callback, $g);
+					return array_merge($out, $in);
 				}
-			, $this->cache_list
+			, []
 			);
 	}
 
@@ -104,30 +117,46 @@ class ObjectCacheKeeper
 			$this->cache_list[$key->get_blog_id()] = [];
 
 		if(!isset($this->cache_list[$key->get_blog_id()][$key->get_group()]))
-			$this->instantiate_cache_for_group($key);
+			$this->instantiate_cache_for_group($key->get_group());
 
 		return $this->cache_list[$key->get_blog_id()][$key->get_group()];
 	}
 
-	private function is_persistent(Key\Cut $key)
+	private function is_persistent(string $group)
 	{
-		return isset($this->persistent_group_list[$key->get_name()]);
+		return isset($this->persistent_group_list[$group]);
 	}
 
-	private function instantiate_cache_for_group(Key\Cut $key)
+	private function migrate_group(string $group)
 	{
-		$class = $this->is_persistent($key)
-			? $this->peristent_cache_class
+		foreach($this->cache_list as $blog_id => $grouped_cache_list)
+			foreach($grouped_cache_list as $name => $cache)
+			{
+				$class = $this->is_persistent($key)
+					? $this->persistent_cache_class
+					: ObjectCache\BareArray::class
+					;
+				$this->cache_list[$blog_id][$group] = new $class;
+			}
+	}
+
+	private function instantiate_cache_for_group(string $group_name)
+	{
+		$class = $this->is_persistent($group_name)
+			? $this->persistent_cache_class
 			: ObjectCache\BareArray::class
 			;
-		$this->cache_list[$key->get_blog_id()][$key->get_group()] = new $class;
+
+		foreach($this->cache_list as $blog_id => $grouped_cache_list)
+			if(!isset($this->cache_list[$blog_id][$group_name]))
+				$this->cache_list[$blog_id][$group_name] = new $class;
 	}
 
 	private $default_group_name = WordPress\ObjectCacheInterface::default_group_name;
 
 	private $cache_list = []; ///< @property array $cache_list
 
-	private $peristent_cache_class = ObjectCache\BareArray::class; ///< @property string
+	private $persistent_cache_class = ObjectCache\BareArray::class; ///< @property string
 	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $persistent_group_list = []; ///< @property bool[string]
 }

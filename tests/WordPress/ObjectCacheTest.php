@@ -152,8 +152,10 @@ class ObjectCacheTest
 		$this->assertSame($value, $result);
 
 		$this->cache->switch_to_blog(84);
-		$result = $this->cache->get($key);
+		$found = true;
+		$result = $this->cache->get($key, '', false, $found);
 		$this->assertNull($result);
+		$this->assertFalse($found);
 
 		$this->cache->switch_to_blog(0);
 		$result = $this->cache->get($key);
@@ -267,11 +269,24 @@ class ObjectCacheTest
 
 	public function testGroup()
 	{
-		$this->cache->add_global_groups('yolo');
 		$this->cache->add_non_persistent_groups('yolo');
+		$this->cache->add_global_groups('yolo');
 
-		/// @todo assert internal state of $this->cache after group addition
-		$this->assertTrue(true);
+		$stats = $this->cache->stats();
+		$this->assertStringContainsString('<span>Hits:</span> 0<br />', $stats);
+
+		$this->cache->get('roudoudou', 'yolo');
+
+		$stats = $this->cache->stats();
+		$this->assertStringContainsString('<span>Hits:</span> 0<br />', $stats);
+		$this->assertStringContainsString('<span>Misses:</span> 1<br />', $stats);
+
+		$this->cache->set('roudoudou', 89, 'yolo');
+		$this->cache->get('roudoudou', 'yolo');
+
+		$stats = $this->cache->stats();
+		$this->assertStringContainsString('<span>Hits:</span> 1<br />', $stats);
+		$this->assertStringContainsString('<span>Misses:</span> 1<br />', $stats);
 	}
 
 	private $cache;
