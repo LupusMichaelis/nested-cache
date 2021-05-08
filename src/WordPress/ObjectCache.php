@@ -10,6 +10,7 @@ class ObjectCache
 	public function __construct()
 	{
 		$this->keeper = new LMNC\ObjectCacheKeeper;
+		$this->keeper->set_persistent_cache_class(LMNC\ObjectCache\Apcu::class);
 		$this->key_maker = new LMNC\Key\Maker(self::default_group_name, self::default_blog_id);
 	}
 
