@@ -9,7 +9,7 @@ function wp_cache_init()
 	global $wp_object_cache;
 
 	$loader = require_once __DIR__ . '/../vendor/autoload.php';
-	$wp_object_cache = new \LupusMichaelis\NestedCache\WordPress\ObjectCache\BareArray;
+	$wp_object_cache = new \LupusMichaelis\NestedCache\WordPress\ObjectCache;
 }
 
 function wp_cache_switch_to_blog()

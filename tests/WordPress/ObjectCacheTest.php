@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace LupusMichaelis\NestedCache\Tests\WordPress\ObjectCache;
+namespace LupusMichaelis\NestedCache\Tests\WordPress;
 
 use PHPUnit\Framework\TestCase;
 
-class BareArrayTest
+class ObjectCacheTest
 	extends TestCase
 {
 	public function setUp(): void
 	{
-		$this->cache = new \LupusMichaelis\NestedCache\WordPress\ObjectCache\BareArray;
+		$this->cache = new \LupusMichaelis\NestedCache\WordPress\ObjectCache;
 	}
 
 	public function tearDown(): void
@@ -197,15 +197,6 @@ class BareArrayTest
 		$this->assertFalse($success);
 	}
 
-	public function testGroupNoop()
-	{
-		$original = clone $this->cache;
-		$this->cache->add_global_groups('toto');
-		$this->assertEquals($original, $this->cache);
-		$this->cache->add_non_persistent_groups('titi');
-		$this->assertEquals($original, $this->cache);
-	}
-
 	/**
 	 * @testWith ["mykey", 42]
 	 */
@@ -272,6 +263,15 @@ class BareArrayTest
 	{
 		$stats = $this->cache->stats();
 		$this->assertNotEmpty($stats);
+	}
+
+	public function testGroup()
+	{
+		$this->cache->add_global_groups('yolo');
+		$this->cache->add_non_persistent_groups('yolo');
+
+		/// @todo assert internal state of $this->cache after group addition
+		$this->assertTrue(true);
 	}
 
 	private $cache;

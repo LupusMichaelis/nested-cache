@@ -1,20 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace LupusMichaelis\NestedCache\WordPress\ObjectCache;
+namespace LupusMichaelis\NestedCache\WordPress;
 
-use LupusMichaelis\NestedCache\WordPress\ObjectCacheInterface;
-use LupusMichaelis\NestedCache\Stats;
-use LupusMichaelis\NestedCache;
+use LupusMichaelis\NestedCache as LMNC;
 
-/**
- * Use PHP's Array and ArrayObject to provide a non persistent cache
- */
-class BareArray
+class ObjectCache
 	implements ObjectCacheInterface
 {
 	public function __construct()
 	{
-		$this->stats = new Stats;
+		$this->stats = new LMNC\Stats;
 	}
 
 	public function __destruct()
@@ -57,12 +52,20 @@ class BareArray
 
 	public function add_global_groups($groups): void
 	{
-		// Noop as the bare array will be freed at the end of the run
+		if(!is_iterable($groups))
+			$groups = (array) $groups;
+
+		foreach($groups as $group)
+			$this->global_group_list[(string) $group] = true;
 	}
 
 	public function add_non_persistent_groups($groups): void
 	{
-		// Noop as the bare array will be freed at the end of the run
+		if(!is_iterable($groups))
+			$groups = (array) $groups;
+
+		foreach($groups as $group)
+			$this->non_persistent_group_list[(string) $group] = true;
 	}
 
 	public function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
@@ -124,7 +127,7 @@ class BareArray
 
 	public function stats(): string
 	{
-		return (string) new Stats\Html($this->stats);
+		return (string) new LMNC\Stats\Html($this->stats);
 	}
 
 	// We do what we can, but in the end, if we can't properly corece key's type, we fail
