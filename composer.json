@@ -1,14 +1,24 @@
 {
     "name": "lupusmichaelis/wp-nested-cache",
     "description": "A collection of drop-in plugins to provide an object cache in WordPress",
-    "type": "project",
+    "type": "wordpress-plugin",
+    "homepage": "https://github.com/LupusMichaelis/nested-cache",
+    "keywords": [
+        "WordPress",
+        "ObjectCache",
+        "APCu",
+        "Memcache",
+        "Memcached",
+        "Nested",
+        "Cache"
+    ],
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "ext-xdebug": "^2.9",
         "spatie/phpunit-watcher": "^1.23",
         "ext-apcu": "^5.1"
     },
-    "license": "LGPL-3.0-or-later",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "LupusMichaelis",
