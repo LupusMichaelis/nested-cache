@@ -12,6 +12,7 @@ interface ObjectCacheInterface
 {
 	const default_expires_in = 0; ///< int Life time in second of the key, 0 is for never
 	const default_group_name = 'default'; ///< string
+	const default_blog_id = 0; ///< int
 	const default_incrementable_floor = 0; ///< int
 	const default_value = null; ///< mixed
 

@@ -10,6 +10,7 @@ class ObjectCache
 	public function __construct()
 	{
 		$this->stats = new LMNC\Stats;
+		$this->key_maker = new LMNC\Key\Maker(self::default_group_name, self::default_blog_id);
 	}
 
 	public function __destruct()
@@ -115,7 +116,8 @@ class ObjectCache
 
 	public function switch_to_blog(int $blog_id): int
 	{
-		return $this->blog_id = $blog_id;
+		$this->key_maker->set_blog_id($blog_id);
+		return $blog_id;
 	}
 
 	public function close(): bool
@@ -150,14 +152,14 @@ class ObjectCache
 		if(empty($group))
 			$group = self::default_group_name;
 
-		if(!isset($this->cache[$this->blog_id]))
-			$this->cache[$this->blog_id] = [];
+		if(!isset($this->cache[$this->key_maker->get_blog_id()]))
+			$this->cache[$this->key_maker->get_blog_id()] = [];
 
-		if(!isset($this->cache[$this->blog_id][$group]))
+		if(!isset($this->cache[$this->key_maker->get_blog_id()][$group]))
 			// Use \ArrayObject to avoid reference problems with bare array
-			$this->cache[$this->blog_id][$group] = new \ArrayObject;
+			$this->cache[$this->key_maker->get_blog_id()][$group] = new \ArrayObject;
 
-		return $this->cache[$this->blog_id][$group];
+		return $this->cache[$this->key_maker->get_blog_id()][$group];
 	}
 
 	private function get_value_or_default(string $group, $key, $default, bool &$found = null)
@@ -169,7 +171,8 @@ class ObjectCache
 	}
 
 	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
+	private $key_maker; ///< @property \LupusMichaelis\NestedCache\Key\Maker
+
 	private $global_group_list = []; ///< @property bool[string]
-	private $blog_id = 0; ///< @property int $blog_id
 	private $cache = []; ///< @property array $cache
 }
