@@ -27,81 +27,54 @@ class ObjectCacheKeeper
 	public function get(Key\Cut $key)
 	{
 		$cache = $this->get_cache_for_key($key);
-
-		if(!isset($cache[$key->get_name()]))
-			throw new NotFound($key);
-
-		return $cache[$key->get_name()];
+		return $cache->get($key);
 	}
 
 	public function set(Key\Cut $key, $value): void
 	{
 		$cache = $this->get_cache_for_key($key);
-		$cache[$key->get_name()] = is_scalar($value) ? $value : clone $value;
+		$cache->set($key, $value);
 	}
 
-	public function add(Key\Cut $key, $value):void
+	public function add(Key\Cut $key, $value): void
 	{
 		$cache = $this->get_cache_for_key($key);
-
-		if(isset($cache[$key->get_name()]))
-			throw new AlreadyCached($key);
-
-		$cache[$key->get_name()] = is_scalar($value) ? $value : clone $value;
+		$cache->add($key, $value);
 	}
 
-	public function replace(Key\Cut $key, $value):void
+	public function replace(Key\Cut $key, $value): void
 	{
 		$cache = $this->get_cache_for_key($key);
-
-		if(!isset($cache[$key->get_name()]))
-			throw new NotFound($key);
-
-		$cache[$key->get_name()] = is_scalar($value) ? $value : clone $value;
+		$cache->replace($key, $value);
 	}
 
 	public function increment(Key\Cut $key, int $bump): int
 	{
-		try
-		{
-			$value = $this->get($key);
-		}
-		catch(NotFound $e)
-		{
-			$value = WordPress\ObjectCacheInterface::default_incrementable_floor;
-		}
-		$value += $bump;
-		$this->set($key, $value);
-
-		return $value;
+		$cache = $this->get_cache_for_key($key);
+		return $cache->increment($key, $bump);
 	}
 
 	public function decrement(Key\Cut $key, int $bump): int
 	{
-		try
-		{
-			$value = $this->get($key);
-		}
-		catch(NotFound $e)
-		{
-			$value = WordPress\ObjectCacheInterface::default_incrementable_floor;
-		}
-		$value -= $bump;
-		$value = max($value, WordPress\ObjectCacheInterface::default_incrementable_floor);
-		$this->set($key, $value);
-
-		return $value;
+		$cache = $this->get_cache_for_key($key);
+		return $cache->decrement($key, $bump);
 	}
 
 	public function delete(Key\Cut $key): void
 	{
 		$cache = $this->get_cache_for_key($key);
-		unset($cache[$key->get_name()]);
+		$cache->delete($key);
 	}
 
 	public function flush(): void
 	{
-		$this->cache_list = [];
+		array_map
+			( function ($g)
+				{
+					array_map(function($c) {$c->flush();}, $g);
+				}
+			, $this->cache_list
+			);
 	}
 
 	private function get_cache_for_key(Key\Cut $key)
@@ -110,15 +83,14 @@ class ObjectCacheKeeper
 			$this->cache_list[$key->get_blog_id()] = [];
 
 		if(!isset($this->cache_list[$key->get_blog_id()][$key->get_group()]))
-			// Use \ArrayObject to avoid reference problems with bare array
-			$this->cache_list[$key->get_blog_id()][$key->get_group()] = new \ArrayObject;
+			$this->cache_list[$key->get_blog_id()][$key->get_group()] = new ObjectCache\BareArray;
 
 		return $this->cache_list[$key->get_blog_id()][$key->get_group()];
 	}
 
 	private $default_group_name = WordPress\ObjectCacheInterface::default_group_name;
 
-	private $caches = []; ///< @property array $caches
+	private $cache_list = []; ///< @property array $cache_list
 
 	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $persistent_group_list = []; ///< @property bool[string]
