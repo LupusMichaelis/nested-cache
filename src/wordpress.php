@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-#wp_cache_init();
-
-#var_dump($wp_object_cache);
+/// Global namespace
 
 function wp_cache_init()
 {

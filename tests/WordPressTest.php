@@ -4,19 +4,21 @@ namespace LupusMichaelis\NestedCache\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-class IndexTest
+class WordPressTest
 	extends TestCase
 {
 	public function setUp(): void
 	{
-		require 'src/index.php';
+		require_once 'src/wordpress.php';
 	}
 
 	public function tearDown(): void
 	{
+		global $wp_object_cache;
+		$wp_object_cache = null;
 	}
 
-	public function testCacheSessionNoGroup()
+	public function testCacheNoGroup()
 	{
 		\wp_cache_init();
 
@@ -94,5 +96,54 @@ class IndexTest
 		$this->assertTrue($success);
 
 		$this->assertNull($wp_object_cache);
+	}
+
+	public function testCacheWithBlogSwitching()
+	{
+		\wp_cache_init();
+
+		global $wp_object_cache;
+		$this->assertNotNull($wp_object_cache);
+
+		$value = \wp_cache_get('yoyo');
+		$this->assertNull($value);
+
+		$success = \wp_cache_add('yoyo', 'value');
+		$this->assertTrue($success);
+
+		$value = \wp_cache_get('yoyo');
+		$this->assertEquals('value', $value);
+
+		$blog_id = \wp_cache_switch_to_blog(42);
+		$this->assertEquals(42, $blog_id);
+
+		$value = \wp_cache_get('yoyo');
+		$this->assertNull($value);
+
+		$success = \wp_cache_add('yoyo', 'other value');
+		$this->assertTrue($success);
+		$this->assertNull($value);
+
+		$value = \wp_cache_get('yoyo');
+		$this->assertEquals('other value', $value);
+
+		$blog_id = \wp_cache_switch_to_blog(0);
+		$this->assertEquals(0, $blog_id);
+
+		$value = \wp_cache_get('yoyo');
+		$this->assertEquals('value', $value);
+	}
+
+	public function testCacheGroups()
+	{
+		\wp_cache_init();
+
+		global $wp_object_cache;
+		$this->assertNotNull($wp_object_cache);
+
+		\wp_cache_add_global_groups('toto');
+		\wp_cache_add_non_persistent_groups('yoyo');
+
+		$this->assertTrue(True);
 	}
 }

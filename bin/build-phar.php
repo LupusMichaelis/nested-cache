@@ -30,7 +30,7 @@ try
 		unset($it);
 	}
 
-	$stub = $phar->createDefaultStub('src/index.php');
+	$stub = $phar->createDefaultStub('src/wordpress.php');
 	$stub = "#!/usr/bin/env php \n$stub";
 	$phar->setStub($stub);
 
