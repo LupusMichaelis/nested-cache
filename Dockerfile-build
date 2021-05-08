@@ -1,13 +1,18 @@
 FROM lupusmichaelis/alpine-php7-composer:1.0.5
 
 RUN apk add \
+	php7-pecl-apcu \
 	php7-memcache \
 	php7-xdebug \
 	&& echo Apk done
 
-RUN sed -i \
-		-e '/^;zend/s/;//' \
-			/etc/php7/conf.d/xdebug.ini;
+RUN set -e; \
+	{ \
+		sed -i '/^;zend/s/;//' \
+			/etc/php7/conf.d/xdebug.ini; \
+		echo 'apc.enable_cli = 1' >> \
+			/etc/php7/conf.d/apcu.ini; \
+	}
 
 COPY \
 	./composer.json \
