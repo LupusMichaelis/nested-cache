@@ -100,23 +100,24 @@ class Keeper
 
 	public function flush(): void
 	{
-		$this->cache = [];
+		$this->cache_list = [];
 	}
 
 	private function get_cache_for_key(Key\Cut $key)
 	{
-		if(!isset($this->cache[$key->get_blog_id()]))
-			$this->cache[$key->get_blog_id()] = [];
+		if(!isset($this->cache_list[$key->get_blog_id()]))
+			$this->cache_list[$key->get_blog_id()] = [];
 
-		if(!isset($this->cache[$key->get_blog_id()][$key->get_group()]))
+		if(!isset($this->cache_list[$key->get_blog_id()][$key->get_group()]))
 			// Use \ArrayObject to avoid reference problems with bare array
-			$this->cache[$key->get_blog_id()][$key->get_group()] = new \ArrayObject;
+			$this->cache_list[$key->get_blog_id()][$key->get_group()] = new \ArrayObject;
 
-		return $this->cache[$key->get_blog_id()][$key->get_group()];
+		return $this->cache_list[$key->get_blog_id()][$key->get_group()];
 	}
 
 	private $default_group_name = WordPress\ObjectCacheInterface::default_group_name;
-	private $cache = []; ///< @property array $cache
+
+	private $caches = []; ///< @property array $caches
 
 	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $persistent_group_list = []; ///< @property bool[string]
