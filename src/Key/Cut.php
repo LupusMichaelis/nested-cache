@@ -16,6 +16,11 @@ class Cut
 			$this->{"set_$k"}($nodes[$k]);
 	}
 
+	public function __tostring()
+	{
+		return implode(':', [$this->blog_id, $this->group, $this->name]);
+	}
+
 	public function set_blog_id(int $blog_id): void
 	{
 		$this->blog_id = $blog_id;
