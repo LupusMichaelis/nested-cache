@@ -53,8 +53,7 @@ class ObjectCache
 
 	public function add_global_groups($groups): void
 	{
-		if(!is_iterable($groups))
-			$groups = (array) $groups;
+		$groups = (array) $groups;
 
 		foreach($groups as $group)
 			$this->global_group_list[(string) $group] = true;
@@ -62,8 +61,7 @@ class ObjectCache
 
 	public function add_non_persistent_groups($groups): void
 	{
-		if(!is_iterable($groups))
-			$groups = (array) $groups;
+		$groups = (array) $groups;
 
 		foreach($groups as $group)
 			$this->non_persistent_group_list[(string) $group] = true;
@@ -173,6 +171,7 @@ class ObjectCache
 	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
 	private $key_maker; ///< @property \LupusMichaelis\NestedCache\Key\Maker
 
+	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $global_group_list = []; ///< @property bool[string]
 	private $cache = []; ///< @property array $cache
 }
