@@ -9,7 +9,7 @@ class ObjectCache
 {
 	public function __construct()
 	{
-		$this->stats = new LMNC\Stats;
+		$this->keeper = new LMNC\Keeper;
 		$this->key_maker = new LMNC\Key\Maker(self::default_group_name, self::default_blog_id);
 	}
 
@@ -127,7 +127,7 @@ class ObjectCache
 
 	public function stats(): string
 	{
-		return (string) new LMNC\Stats\Html($this->stats);
+		return (string) new LMNC\Stats\Html($this->keeper->get_stats());
 	}
 
 	// We do what we can, but in the end, if we can't properly corece key's type, we fail
@@ -168,8 +168,8 @@ class ObjectCache
 		return $found ? $cache[$key] : $default;
 	}
 
-	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
 	private $key_maker; ///< @property \LupusMichaelis\NestedCache\Key\Maker
+	private $keeper; ///< @property \LupusMichaelis\NestedCache\KeeperInterface
 
 	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $global_group_list = []; ///< @property bool[string]
