@@ -19,4 +19,14 @@ class CutTest
 		$this->assertEquals($path['group'], $this->cut->get_group());
 		$this->assertEquals($path['name'], $this->cut->get_name());
 	}
+
+	/**
+	 * @testWith [ {"blog_id": 45, "goup": "wanderer", "name": "me"} ]
+	 */
+	public function testFailingInstanciation($path)
+	{
+		$this->expectException(\Error::class);
+
+		$this->cut = new \LupusMichaelis\NestedCache\Key\Cut($path);
+	}
 }
