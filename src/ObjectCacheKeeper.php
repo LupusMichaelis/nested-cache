@@ -2,8 +2,9 @@
 
 namespace LupusMichaelis\NestedCache;
 
-class Keeper
+class ObjectCacheKeeper
 	implements KeeperInterface
+	, ObjectCacheInterface
 {
 	public function __construct()
 	{

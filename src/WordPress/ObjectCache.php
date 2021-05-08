@@ -9,7 +9,7 @@ class ObjectCache
 {
 	public function __construct()
 	{
-		$this->keeper = new LMNC\Keeper;
+		$this->keeper = new LMNC\ObjectCacheKeeper;
 		$this->key_maker = new LMNC\Key\Maker(self::default_group_name, self::default_blog_id);
 	}
 
