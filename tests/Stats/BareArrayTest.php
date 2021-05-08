@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace LupusMichaelis\NestedCache\Tests;
+namespace LupusMichaelis\NestedCache\Tests\Stats;
 
 use PHPUnit\Framework\TestCase;
 
-class StatsTest
+class BareArrayTest
 	extends TestCase
 {
 	public function setUp(): void
 	{
-		$this->stats = new \LupusMichaelis\NestedCache\Stats;
+		$this->stats = new \LupusMichaelis\NestedCache\Stats\BareArray;
 	}
 
 	public function tearDown(): void
@@ -19,7 +19,7 @@ class StatsTest
 
 	public function testInstantiate()
 	{
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\Stats::class, $this->stats);
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\Stats\BareArray::class, $this->stats);
 	}
 
 	public function testIncrementation()

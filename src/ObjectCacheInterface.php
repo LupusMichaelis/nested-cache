@@ -14,4 +14,6 @@ interface ObjectCacheInterface
 	function decrement(Key\Cut $key, int $bump): int;
 
 	function flush(): void;
+
+	function get_stats(): StatsInterface;
 }

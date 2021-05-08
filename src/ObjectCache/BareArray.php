@@ -9,10 +9,10 @@ class BareArray
 {
 	public function __construct()
 	{
-		$this->stats = new LMNC\Stats;
+		$this->stats = new LMNC\Stats\BareArray;
 	}
 
-	public function get_stats(): LMNC\Stats
+	public function get_stats(): LMNC\StatsInterface
 	{
 		return $this->stats;
 	}

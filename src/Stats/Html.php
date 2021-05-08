@@ -2,7 +2,7 @@
 
 namespace LupusMichaelis\NestedCache\Stats;
 
-use LupusMichaelis\NestedCache\Stats;
+use LupusMichaelis\NestedCache as LMNC;
 
 class Html
 {
@@ -13,7 +13,7 @@ class Html
 		<p>
 	';
 
-	public function __construct(Stats $stats)
+	public function __construct(LMNC\StatsInterface $stats)
 	{
 		$this->stats = $stats;
 	}
@@ -23,5 +23,5 @@ class Html
 		return sprintf(self::default_template, $this->stats->get_hits(), $this->stats->get_misses());
 	}
 
-	private $stats; ///< @property Stat $stats
+	private $stats; ///< @property LMNC\StatsInterface $stats
 }

@@ -8,12 +8,23 @@ class ObjectCacheKeeper
 {
 	public function __construct()
 	{
-		$this->stats = new Stats;
 	}
 
-	public function get_stats(): Stats
+	public function get_stats(): StatsInterface
 	{
-		return $this->stats;
+		$stat_list = $this->iterate_caches(function($c) {$c->get_stats();});
+		$stats = new Stats\BareArray;
+
+		return array_reduce
+			( $stat_list
+			, function (StatsInterface $s, StatsInterface $e)
+				{
+					$s->set_hits($s->get_hits() + $e->get_hits());
+					$s->set_misses($s->get_misses() + $e->get_misses());
+					return $s;
+				}
+			, $stats
+			);
 	}
 
 	public function add_group(string $name, bool $is_persistent): void
@@ -73,10 +84,15 @@ class ObjectCacheKeeper
 
 	public function flush(): void
 	{
-		array_map
-			( function ($g)
+		$this->iterate_caches(function($c) {$c->flush();});
+	}
+
+	private function iterate_caches($callback): array
+	{
+		return array_map
+			( function (array $g) use(&$callback)
 				{
-					array_map(function($c) {$c->flush();}, $g);
+					array_map($callback, $g);
 				}
 			, $this->cache_list
 			);
@@ -114,5 +130,4 @@ class ObjectCacheKeeper
 	private $peristent_cache_class = ObjectCache\BareArray::class; ///< @property string
 	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $persistent_group_list = []; ///< @property bool[string]
-	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
 }

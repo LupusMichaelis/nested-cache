@@ -9,7 +9,7 @@ class JsonTest
 {
 	public function testIncrementation()
 	{
-		$stat_stub = $this->createStub(\LupusMichaelis\NestedCache\Stats::class);
+		$stat_stub = $this->createStub(\LupusMichaelis\NestedCache\AbstractStats::class);
 		$stat_stub->method('get_misses')->willReturn(42);
 		$stat_stub->method('get_hits')->willReturn(12);
 

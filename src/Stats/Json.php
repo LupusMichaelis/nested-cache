@@ -2,12 +2,12 @@
 
 namespace LupusMichaelis\NestedCache\Stats;
 
-use LupusMichaelis\NestedCache\Stats;
+use LupusMichaelis\NestedCache as LMNC;
 
 class Json
 	implements \JsonSerializable
 {
-	public function __construct(Stats $stats)
+	public function __construct(LMNC\StatsInterface $stats)
 	{
 		$this->stats = $stats;
 	}
@@ -25,5 +25,5 @@ class Json
 			];
 	}
 
-	private $stats; ///< @property Stat $stats
+	private $stats; ///< @property LMNC\StatsInterface $stats
 }
