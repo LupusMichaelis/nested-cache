@@ -19,10 +19,10 @@ class BareArray
 
 	public function get(LMNC\Key\Cut $key)
 	{
-		if(!isset($this->cache[$key->get_name()]))
+		if(!isset($this->cache["$key"]))
 			throw new LMNC\NotFound($key);
 
-		$cached = $this->cache[$key->get_name()];
+		$cached = $this->cache["$key"];
 		$value =
 			is_string($cached)
 				? @unserialize($cached)
@@ -42,12 +42,12 @@ class BareArray
 				$value = serialize($value);
 		}
 
-		$this->cache[$key->get_name()] = $value;
+		$this->cache["$key"] = $value;
 	}
 
 	public function add(LMNC\Key\Cut $key, $value):void
 	{
-		if(isset($this->cache[$key->get_name()]))
+		if(isset($this->cache["$key"]))
 			throw new LMNC\AlreadyCached($key);
 
 		$this->set($key, $value);
@@ -55,7 +55,7 @@ class BareArray
 
 	public function replace(LMNC\Key\Cut $key, $value):void
 	{
-		if(!isset($this->cache[$key->get_name()]))
+		if(!isset($this->cache["$key"]))
 			throw new LMNC\NotFound($key);
 
 		$this->set($key, $value);
@@ -96,7 +96,7 @@ class BareArray
 
 	public function delete(LMNC\Key\Cut $key): void
 	{
-		unset($this->cache[$key->get_name()]);
+		unset($this->cache["$key"]);
 	}
 
 	public function flush(): void
