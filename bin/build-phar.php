@@ -6,7 +6,7 @@ $target = $build_dir . '/object-cache.phar';
 
 try
 {
-	if(!@mkdir($build_dir, 0755, true))
+	if(!@mkdir($build_dir, 0644, true))
 		if(!is_dir($build_dir))
 			throw new \exception(sprintf('Can\'t write directory \'%s\'', $build_dir));
 
@@ -38,7 +38,7 @@ try
 	$phar->compressFiles(\Phar::GZ);
 	unset($phar);
 
-	if(!@chmod($target, 0550))
+	if(!@chmod($target, 0444))
 		throw new \exception(sprintf('Can\'t change file mod for \'%s\'', $target));
 }
 catch(\exception $e)
