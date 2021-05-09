@@ -27,7 +27,11 @@ php bin/build-phar.php
 ```
 
 The file `./build/object-cache.phar` should then be copied in the `wp-content` of your WordPress
-instance.
+instance, then create the `object-cache.php` file that will load everything.
+
+```
+echo '<?php include '\''object-cache.phar'\'';' > wp-content/object-cache.php
+```
 
 ## Developer onboarding
 
