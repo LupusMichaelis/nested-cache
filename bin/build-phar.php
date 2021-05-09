@@ -31,7 +31,6 @@ try
 	}
 
 	$stub = $phar->createDefaultStub('src/wordpress.php');
-	$stub = "#!/usr/bin/env php \n$stub";
 	$phar->setStub($stub);
 
 	$phar->stopBuffering();
