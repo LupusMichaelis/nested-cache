@@ -29,12 +29,12 @@ class Apcu
 		if(false === $success)
 			throw new LMNC\NotFound($key);
 
-		return $value;
+		return $this->unwrap($value);
 	}
 
 	public function set(LMNC\Key\Cut $key, $value): void
 	{
-		$success = \apcu_store("$key", is_scalar($value) ? $value : clone $value);
+		$success = \apcu_store("$key", $this->wrap($value));
 
 		if(false === $success)
 			throw new \Exception(sprintf('Error occured on setting \'%s\'', $key));
@@ -43,7 +43,7 @@ class Apcu
 	public function add(LMNC\Key\Cut $key, $value): void
 	{
 		$key = (string) $key;
-		$success = \apcu_add($key, is_scalar($value) ? $value : clone $value);
+		$success = \apcu_add($key, $this->wrap($value));
 
 		if(false === $success)
 			throw new LMNC\AlreadyCached($key);
@@ -95,6 +95,30 @@ class Apcu
 	public function flush(): void
 	{
 		apcu_clear_cache();
+	}
+
+	protected function wrap($value)
+	{
+		if(is_object($value))
+		{
+			$glimpse = new \ReflectionObject($value);
+			if($glimpse->isCloneable())
+				$value = clone $value;
+			else
+				$value = serialize($value);
+		}
+
+		return $value;
+	}
+
+	protected function unwrap($cached)
+	{
+		$value =
+			is_string($cached)
+				? @unserialize($cached)
+				: $cached;
+		
+		return false === $value ? $cached : $value;
 	}
 
 	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
