@@ -66,7 +66,7 @@ class Apcu
 
 		if(false === $success)
 		{
-			$value = LMNC\WordPress\ObjectCacheInterface::default_incrementable_floor;
+			$value = $bump + LMNC\WordPress\ObjectCacheInterface::default_incrementable_floor;
 			$this->set($key, $value);
 		}
 
