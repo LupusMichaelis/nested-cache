@@ -3,17 +3,78 @@
 set -e
 
 declare -r envfile='.env'
-declare -r devimage=wpsmd
-declare -r buildimage=wpsmb
+declare -r docker_namespace='lupusmichaelis'
+
+declare -rA container_name_list=(
+	[dev]=wp-nested-cache-dev
+	[builder]=wp-nested-cache-builder
+);
+
+declare -rA image_name_list=(
+	[dev]="$docker_namespace/${container_name_list[dev]}"
+	[builder]="$docker_namespace/${container_name_list[builder]}"
+);
 
 session-main()
 {
-	session-docker "$@"
+	case "$1" in
+		init)
+			{
+				echo LP_DEV_GID=$(id -g)
+				echo LP_DEV_UID=$(id -u)
+				echo LP_DEV_USER_ALIAS=$(id -un)
+
+				echo BUILD_DOCKER_IMAGE="${image_name_list[builder]}"
+				echo DEV_DOCKER_IMAGE="${image_name_list[dev]}"
+
+				echo BUILD_DOCKER_CONTAINER="${container_name_list[builder]}"
+				echo DEV_DOCKER_CONTAINER="${container_name_list[dev]}"
+			} > "$envfile"
+			;;
+		release)
+			docker build -t "${image_name_list[builder]}" -f Dockerfile-build .
+			docker run \
+				--rm --env-file "$envfile" \
+				-v$PWD/build:/home/anvil/build \
+				"${image_name_list[builder]}"
+			;;
+
+		help|--help|-h|'')
+			echo "$0" '[init|release|dev|help|*]'
+			;;
+		*)
+			session-docker "$@"
+	esac
 }
 
 session-docker()
 {
-	docker run -it --rm --env-file "$envfile" -v$PWD:/home/anvil "$devimage" "$@"
+	local cid=$(docker ps -qa --filter "name=${container_name_list[dev]}")
+
+	case "$1" in
+		kill)
+			if [ ! -z "$cid" ]
+			then
+				docker kill "$cid"
+			fi
+			;;
+		*)
+			if [ -z "$cid" ]
+			then
+				docker build -t "${image_name_list[dev]}" -f Dockerfile-dev .
+				docker run -it --rm \
+					--env-file "$envfile" \
+					-v$PWD:/home/anvil \
+					--name "${container_name_list[dev]}" \
+					"${image_name_list[dev]}" \
+					"$@"
+			else
+				docker exec -it \
+					-u "$(id -u):$(id -g)" \
+					"${container_name_list[dev]}" \
+					"$@"
+			fi
+	esac
 }
 
 session-main "$@"
