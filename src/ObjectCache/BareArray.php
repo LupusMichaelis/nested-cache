@@ -22,12 +22,27 @@ class BareArray
 		if(!isset($this->cache[$key->get_name()]))
 			throw new LMNC\NotFound($key);
 
-		return $this->cache[$key->get_name()];
+		$cached = $this->cache[$key->get_name()];
+		$value =
+			is_string($cached)
+				? @unserialize($cached)
+				: $cached;
+		
+		return false === $value ? $cached : $value;
 	}
 
 	public function set(LMNC\Key\Cut $key, $value): void
 	{
-		$this->cache[$key->get_name()] = is_scalar($value) ? $value : clone $value;
+		if(is_object($value))
+		{
+			$glimpse = new \ReflectionObject($value);
+			if($glimpse->isCloneable())
+				$value = clone $value;
+			else
+				$value = serialize($value);
+		}
+
+		$this->cache[$key->get_name()] = $value;
 	}
 
 	public function add(LMNC\Key\Cut $key, $value):void
@@ -35,7 +50,7 @@ class BareArray
 		if(isset($this->cache[$key->get_name()]))
 			throw new LMNC\AlreadyCached($key);
 
-		$this->cache[$key->get_name()] = is_scalar($value) ? $value : clone $value;
+		$this->set($key, $value);
 	}
 
 	public function replace(LMNC\Key\Cut $key, $value):void
@@ -43,7 +58,7 @@ class BareArray
 		if(!isset($this->cache[$key->get_name()]))
 			throw new LMNC\NotFound($key);
 
-		$this->cache[$key->get_name()] = is_scalar($value) ? $value : clone $value;
+		$this->set($key, $value);
 	}
 
 	public function increment(LMNC\Key\Cut $key, int $bump): int
