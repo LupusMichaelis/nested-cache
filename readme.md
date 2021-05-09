@@ -2,6 +2,8 @@
 
 Providing a universal cache system with monitoring, resource awareness and much more.
 
+*BEWARE* This is not ready for production yet.
+
 ## Installation
 
 As for now, this project is under development. Installation steps will be considered
