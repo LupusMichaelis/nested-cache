@@ -30,8 +30,7 @@ class Logger
 	public function info(string $fmt, ...$params): void
 	{
 		\trigger_error($this->message($fmt, ...$params), \E_USER_NOTICE);
-
-	}
+	} // @codeCoverageIgnore
 
 	public function debug(string $fmt, ...$params): void
 	{
@@ -41,12 +40,12 @@ class Logger
 	public function error(string $fmt, ...$params): void
 	{
 		\trigger_error($this->message($fmt, ...$params), \E_USER_ERROR);
-	}
+	} // @codeCoverageIgnore
 
-	protected function warning(string $fmt, ...$params): string
+	public function warning(string $fmt, ...$params): string
 	{
 		\trigger_error($this->message($fmt, ...$params), \E_USER_WARNING);
-	}
+	} // @codeCoverageIgnore
 
 	protected function message(string $fmt, ...$params): string
 	{

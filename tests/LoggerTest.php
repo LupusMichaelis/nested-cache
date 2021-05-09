@@ -32,6 +32,10 @@ class LoggerTest
 		$this->expectNotice();
 		$this->expectNoticeMessage('Ma super info');
 		$this->logger->info('Ma super info');
+
+		$this->expectNotice();
+		$this->expectNoticeMessage('Ma super info roupoudou');
+		$this->logger->info('Ma super info %s', 'roupoudou');
 	}
 
 	public function testLocalizedLog()
@@ -48,7 +52,7 @@ class LoggerTest
 		$this->expectError();
 		$this->expectErrorMessage('in flammes');
 		$this->logger
-			->info('in flammes');
+			->error('in flammes');
 	}
 
 	public function testLocalizedError()
@@ -57,7 +61,24 @@ class LoggerTest
 		$this->expectErrorMessage('cursed.php:821:in flammes');
 		$this->logger
 			->at('cursed.php', 821)
-			->info('in flammes');
+			->error('in flammes');
+	}
+
+	public function testWarning()
+	{
+		$this->expectWarning();
+		$this->expectWarningMessage('beep beep');
+		$this->logger
+			->warning('beep beep');
+	}
+
+	public function testLocalizedWarning()
+	{
+		$this->expectWarning();
+		$this->expectWarningMessage('bumper.php:759:pinpon pinpon');
+		$this->logger
+			->at('bumper.php', 759)
+			->warning('pinpon pinpon');
 	}
 
 	/**
