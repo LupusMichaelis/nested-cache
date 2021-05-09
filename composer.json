@@ -44,7 +44,7 @@
             "ls -lh build/object-cache.phar"
         ],
         "build-release": [
-            "@composer install --no-dev",
+            "@composer install -o --no-dev",
             "@composer dump-autoload --no-dev -o -n",
             "@build"
         ],
