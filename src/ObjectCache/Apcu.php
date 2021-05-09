@@ -10,7 +10,7 @@ class Apcu
 	public function __construct()
 	{
 		if(!apcu_enabled())
-			throw new \Exception('ACPU not enabled');
+			throw new \Exception('ACPu not enabled');
 
 		$this->stats = new LMNC\Stats\Apcu;
 	}
@@ -37,13 +37,14 @@ class Apcu
 		$success = \apcu_store("$key", $this->wrap($value));
 
 		if(false === $success)
-			throw new \Exception(sprintf('Error occured on setting \'%s\'', $key));
+			// \apcu_store seems to fail only with non-string non-array keys, as I ensure "$key"
+			// is a string, it can't fail, except in system failure (OOM, etc)
+			throw new \Exception(sprintf('Error occured on setting \'%s\'', $key)); // @codeCoverageIgnore
 	}
 
 	public function add(LMNC\Key\Cut $key, $value): void
 	{
-		$key = (string) $key;
-		$success = \apcu_add($key, $this->wrap($value));
+		$success = \apcu_add("$key", $this->wrap($value));
 
 		if(false === $success)
 			throw new LMNC\AlreadyCached($key);

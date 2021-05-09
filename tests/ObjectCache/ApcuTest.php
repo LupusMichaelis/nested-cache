@@ -127,6 +127,17 @@ class ApcuTest
 	/**
 	 * @dataProvider provideKeys
 	 */
+	public function testAddTwice($key)
+	{
+		$this->expectException(\LupusMichaelis\NestedCache\AlreadyCached::class);
+
+		$this->cache->add($key, 'salmon');
+		$this->cache->add($key, 'trout');
+	}
+
+	/**
+	 * @dataProvider provideKeys
+	 */
 	public function testReplaceNonExistant($key)
 	{
 		$this->expectException(\Exception::class);
