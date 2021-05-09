@@ -41,7 +41,7 @@
         "build": [
             "@composer dump-autoload",
             "php -dphar.readonly=0 ./bin/build-phar.php",
-            "ls -lh bin/build-phar.php"
+            "ls -lh build/object-cache.phar"
         ],
         "build-release": [
             "@composer install --no-dev",
