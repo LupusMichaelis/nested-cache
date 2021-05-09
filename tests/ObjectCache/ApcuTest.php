@@ -124,6 +124,30 @@ class ApcuTest
 		$this->assertEquals($value, 0);
 	}
 
+	/**
+	 * @dataProvider provideKeys
+	 */
+	public function testReplaceNonExistant($key)
+	{
+		$this->expectException(\Exception::class);
+
+		$this->cache->replace($key, 'salmon');
+	}
+
+	/**
+	 * @dataProvider provideKeys
+	 */
+	public function testReplaceExisting($key)
+	{
+		$this->cache->add($key, 'trout');
+		$value = $this->cache->get($key);
+		$this->assertEquals($value, 'trout');
+
+		$this->cache->replace($key, 'salmon');
+		$value = $this->cache->get($key);
+		$this->assertEquals($value, "salmon");
+	}
+
 	public function provideKeys()
 	{
 		return

@@ -51,10 +51,10 @@ class Apcu
 
 	public function replace(LMNC\Key\Cut $key, $value): void
 	{
-		if(!apcu_exits("$key"))
+		if(!\apcu_exists("$key"))
 			throw new LMNC\NotFound($key);
 
-		/// @todo Race condition: if the value is deleted in between, the replace contract will be broken
+		/// @fixme Race condition: if the value is deleted in between, the replace contract will be broken
 
 		$this->set($key, $value);
 	}
