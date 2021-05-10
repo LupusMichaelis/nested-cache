@@ -4,36 +4,43 @@ namespace LupusMichaelis\NestedCache\Tests\ObjectCache;
 
 use PHPUnit\Framework\TestCase;
 
-class ApcuTest
+class LoggerTest
 	extends TestCase
 {
 	public function setUp(): void
 	{
-		$this->cache = new \LupusMichaelis\NestedCache\ObjectCache\Apcu;
+		// @fixme we shut up error_log (which output in php://stdout instead of a buffered
+		//		  output
+		$this->error_log = ini_set('error_log', '/dev/null');
+
+		$this->actual = new \LupusMichaelis\NestedCache\ObjectCache\Apcu;
+		$this->logged_cache = new \LupusMichaelis\NestedCache\ObjectCache\Logger($this->actual);
 	}
 
 	public function tearDown(): void
 	{
-		unset($this->cache);
+		unset($this->logged_cache);
 		\apcu_clear_cache();
+		ini_set('error_log', $this->error_log);
+
 	}
 
 	public function testInstantiate()
 	{
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Apcu::class, $this->cache);
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Logger::class, $this->logged_cache);
 	}
 
 	/**
 	 * @dataProvider provideKeys
 	 */
-	public function testGetNotFound($key)
+	public function testGet($key)
 	{
-		$stats = $this->cache->get_stats();
+		$stats = $this->logged_cache->get_stats();
 		$this->assertEquals(0, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
 
 		$this->expectException(\LupusMichaelis\NestedCache\NotFound::class);
-		$this->cache->get($key);
+		$this->logged_cache->get($key);
 	}
 
 	/**
@@ -41,29 +48,29 @@ class ApcuTest
 	 */
 	public function testRun($key)
 	{
-		$stats = $this->cache->get_stats();
+		$stats = $this->logged_cache->get_stats();
 		$this->assertEquals(0, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
 
-		try { $this->cache->get($key); } catch(\LupusMichaelis\NestedCache\NotFound $e) { }
+		try { $this->logged_cache->get($key); } catch(\LupusMichaelis\NestedCache\NotFound $e) { }
 
-		$stats = $this->cache->get_stats();
+		$stats = $this->logged_cache->get_stats();
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
 
-		$this->cache->set($key, 8956);
-		$stats = $this->cache->get_stats();
+		$this->logged_cache->set($key, 8956);
+		$stats = $this->logged_cache->get_stats();
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
 
-		$this->cache->get($key);
-		$stats = $this->cache->get_stats();
+		$this->logged_cache->get($key);
+		$stats = $this->logged_cache->get_stats();
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(1, $stats->get_hits());
 
-		$this->cache->delete($key);
+		$this->logged_cache->delete($key);
 		$this->expectException(\LupusMichaelis\NestedCache\NotFound::class);
-		$value = $this->cache->get($key);
+		$value = $this->logged_cache->get($key);
 	}
 
 	/**
@@ -73,8 +80,8 @@ class ApcuTest
 	{
 		$object = new Cloneable;
 
-		$this->cache->set($key, $object);
-		$cached = $this->cache->get($key);
+		$this->logged_cache->set($key, $object);
+		$cached = $this->logged_cache->get($key);
 
 		$this->assertEquals($object, $cached);
 		$this->assertNotSame($object, $cached);
@@ -87,8 +94,8 @@ class ApcuTest
 	{
 		$not_scalar_non_clonable = new \Error('My not clonable error object');
 
-		$this->cache->add($key, $not_scalar_non_clonable);
-		$stored_value = $this->cache->get($key);
+		$this->logged_cache->add($key, $not_scalar_non_clonable);
+		$stored_value = $this->logged_cache->get($key);
 		$this->assertEquals($not_scalar_non_clonable, $stored_value);
 	}
 
@@ -97,30 +104,30 @@ class ApcuTest
 	 */
 	public function testIncrement($key)
 	{
-		$value = $this->cache->increment($key, 1);
+		$value = $this->logged_cache->increment($key, 1);
 		$this->assertEquals($value, 1);
 
-		$value = $this->cache->increment($key, 2);
+		$value = $this->logged_cache->increment($key, 2);
 		$this->assertEquals($value, 3);
 
-		$value = $this->cache->decrement($key, 1);
+		$value = $this->logged_cache->decrement($key, 1);
 		$this->assertEquals($value, 2);
 
-		$value = $this->cache->decrement($key, 10);
+		$value = $this->logged_cache->decrement($key, 10);
 		$this->assertEquals($value, -8);
 
-		$this->cache->set($key, "stop");
-		$value = $this->cache->get($key);
+		$this->logged_cache->set($key, "stop");
+		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, "stop");
 
-		$value = $this->cache->increment($key, 11);
+		$value = $this->logged_cache->increment($key, 11);
 		$this->assertEquals($value, 11);
 
-		$this->cache->set($key, "stop");
-		$value = $this->cache->get($key);
+		$this->logged_cache->set($key, "stop");
+		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, "stop");
 
-		$value = $this->cache->decrement($key, 9000);
+		$value = $this->logged_cache->decrement($key, 9000);
 		$this->assertEquals($value, 0);
 	}
 
@@ -131,8 +138,8 @@ class ApcuTest
 	{
 		$this->expectException(\LupusMichaelis\NestedCache\AlreadyCached::class);
 
-		$this->cache->add($key, 'salmon');
-		$this->cache->add($key, 'trout');
+		$this->logged_cache->add($key, 'salmon');
+		$this->logged_cache->add($key, 'trout');
 	}
 
 	/**
@@ -142,7 +149,7 @@ class ApcuTest
 	{
 		$this->expectException(\Exception::class);
 
-		$this->cache->replace($key, 'salmon');
+		$this->logged_cache->replace($key, 'salmon');
 	}
 
 	/**
@@ -150,12 +157,12 @@ class ApcuTest
 	 */
 	public function testReplaceExisting($key)
 	{
-		$this->cache->add($key, 'trout');
-		$value = $this->cache->get($key);
+		$this->logged_cache->add($key, 'trout');
+		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, 'trout');
 
-		$this->cache->replace($key, 'salmon');
-		$value = $this->cache->get($key);
+		$this->logged_cache->replace($key, 'salmon');
+		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, "salmon");
 	}
 
@@ -166,24 +173,3 @@ class ApcuTest
 			];
 	}
 }
-
-class Cloneable
-{
-	public $payload;
-
-	public function __construct()
-	{
-		$this->payload = new \ArrayObject(range(1, 4));
-	}
-
-	public function __tostring()
-	{
-		return '[' . count($this->payload) .']';
-	}
-
-	public function __clone()
-	{
-		$c = new self;
-		$c->payload = clone $this->payload;
-	}
-};
