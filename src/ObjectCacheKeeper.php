@@ -6,6 +6,22 @@ class ObjectCacheKeeper
 	implements KeeperInterface
 	, ObjectCacheInterface
 {
+	public function __construct()
+	{
+		$this->cache_factory = new ObjectCache\Factory
+			(
+				[ 'ephemeral' =>
+					[ 'class' => ObjectCache\BareArray::class
+					, 'log' => false
+					]
+				, 'persistent' =>
+					[ 'class' => ObjectCache\Apcu::class
+					, 'log' => false
+					]
+				]
+			);
+	}
+
 	public function get_stats(): StatsInterface
 	{
 		$stat_list = $this->iterate_caches(function($c) {return $c->get_stats();});
@@ -132,31 +148,26 @@ class ObjectCacheKeeper
 		foreach($this->cache_list as $blog_id => $grouped_cache_list)
 			foreach($grouped_cache_list as $name => $cache)
 			{
-				$class = $this->is_persistent($key)
-					? $this->persistent_cache_class
-					: ObjectCache\BareArray::class
-					;
-				$this->cache_list[$blog_id][$group] = new $class;
+				$flavour = $this->is_persistent($group_name) ? 'persistent' : 'ephemeral';
+				$this->cache_list[$blog_id][$group] = $this->cache_factory->get($flavour);
 			}
 	}
 
 	private function instantiate_cache_for_group(string $group_name)
 	{
-		$class = $this->is_persistent($group_name)
-			? $this->persistent_cache_class
-			: ObjectCache\BareArray::class
-			;
+		$flavour = $this->is_persistent($group_name) ? 'persistent' : 'ephemeral';
 
 		foreach($this->cache_list as $blog_id => $grouped_cache_list)
 			if(!isset($this->cache_list[$blog_id][$group_name]))
-				$this->cache_list[$blog_id][$group_name] = new $class;
+				$this->cache_list[$blog_id][$group_name] = $this->cache_factory->get($flavour);
 	}
 
 	private $default_group_name = WordPress\ObjectCacheInterface::default_group_name;
 
 	private $cache_list = []; ///< @property array $cache_list
 
-	private $persistent_cache_class = ObjectCache\BareArray::class; ///< @property string
 	private $non_persistent_group_list = []; ///< @property bool[string]
 	private $persistent_group_list = []; ///< @property bool[string]
+
+	private $cache_factory; ///< @property ObjectCache\Factory
 }
