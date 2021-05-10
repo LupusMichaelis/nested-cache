@@ -25,8 +25,15 @@ class Logger
 		return $this->name;
 	}
 
+	private function cast($any)
+	{
+		return var_export($any, true);
+	}
+
 	private function log($file, $line, $class, $func, $fmt = '', ...$args)
 	{
+		$args = array_map([$this, 'cast'], $args);
+
 		$this->monitor
 			->at($file, $line)
 			->debug("%s::%s $fmt", $class, $func, ...$args);
@@ -47,19 +54,19 @@ class Logger
 
 	public function set(LMNC\Key\Cut $key, $value): void
 	{
-		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", "$value");
+		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", $value);
 		$this->monitored->set($key, $value);
 	}
 
 	public function add(LMNC\Key\Cut $key, $value): void
 	{
-		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", "$value");
+		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", $value);
 		$this->monitored->add($key, $value);
 	}
 
 	public function replace(LMNC\Key\Cut $key, $value): void
 	{
-		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", "$value");
+		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", $value);
 		$this->monitored->replace($key, $value);
 	}
 
@@ -71,13 +78,13 @@ class Logger
 
 	public function increment(LMNC\Key\Cut $key, int $bump): int
 	{
-		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) bump(%d)', "$key", "$bump");
+		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) bump(%s)', "$key", "$bump");
 		return $this->monitored->increment($key, $bump);
 	}
 
 	public function decrement(LMNC\Key\Cut $key, int $bump): int
 	{
-		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) bump(%d)', "$key", "$bump");
+		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) bump(%s)', "$key", "$bump");
 		return $this->monitored->decrement($key, $bump);
 	}
 
