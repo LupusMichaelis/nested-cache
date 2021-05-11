@@ -10,13 +10,15 @@ class ObjectCacheKeeper
 	{
 		$this->cache_factory = new ObjectCache\Factory
 			(
-				[ 'ephemeral' =>
-					[ 'class' => ObjectCache\BareArray::class
-					, 'log' => false
-					]
-				, 'persistent' =>
-					[ 'class' => ObjectCache\Apcu::class
-					, 'log' => false
+				[ 'cache_list' =>
+					[ 'ephemeral' =>
+						[ 'class' => ObjectCache\BareArray::class
+						, 'log' => false
+						]
+					, 'persistent' =>
+						[ 'class' => ObjectCache\Apcu::class
+						, 'log' => false
+						]
 					]
 				]
 			);

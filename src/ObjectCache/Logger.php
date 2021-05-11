@@ -27,7 +27,7 @@ class Logger
 
 	private function cast($any)
 	{
-		return var_export($any, true);
+		return serialize($any);
 	}
 
 	private function log($file, $line, $class, $func, $fmt = '', ...$args)

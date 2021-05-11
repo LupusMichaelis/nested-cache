@@ -7,24 +7,32 @@ use LupusMichaelis\NestedCache as LMNC;
 class Factory
 {
 	const default_options =
-		[ 'persistent' =>
-			[ 'class' => Apcu::class
-			, 'log' => false
-			]
-		, 'ephemeral' =>
-			[ 'class' => BareArray::class
-			, 'log' => false
+		[ 'cache_list' =>
+			[ 'persistent' =>
+				[ 'class' => Apcu::class
+				, 'log' => false
+				]
+			, 'ephemeral' =>
+				[ 'class' => BareArray::class
+				, 'log' => false
+				]
 			]
 		];
 
-	public function __construct(array $options = [])
+	public function __construct(array $options = self::default_options)
 	{
 		$this->set_options($options);
 	}
 
 	public function set_options(array $options)
 	{
-		foreach(array_replace_recursive(self::default_options, $options) as $target => $target_options)
+		if(isset($options['cache_list']))
+			$this->set_cache_list($options['cache_list']);
+	}
+
+	public function set_cache_list(array $cache_list)
+	{
+		foreach(array_replace_recursive(self::default_options['cache_list'], $cache_list) as $target => $target_options)
 			$this->set($target, $target_options);
 	}
 
@@ -32,7 +40,7 @@ class Factory
 	{
 		$cache_class = isset($options['class'])
 			? $options['class']
-			: self::default_options[$target]['class']
+			: self::default_options['cache_list'][$target]['class']
 			;
 
 		$is_log_enabled = isset($options['log']) && (bool)$options['log'];

@@ -32,8 +32,10 @@ class FactoryTest
 	{
 		$this->factory->set_options
 			(
-				[ 'persistent' => [ 'log' => true ]
-				, 'ephemeral' => [ 'log' => true ]
+				[ 'cache_list' =>
+					[ 'persistent' => [ 'log' => true ]
+					, 'ephemeral' => [ 'log' => true ]
+					]
 				]
 			);
 
@@ -54,7 +56,9 @@ class FactoryTest
 		$this->expectExceptionMessage('Class \'Yolo\' not supported');
 		$this->factory->set_options
 			(
-				[ 'cat' => [ 'log' => true, 'class' => 'Yolo' ]
+				[ 'cache_list' =>
+					[ 'cat' => [ 'log' => true, 'class' => 'Yolo' ]
+					]
 				]
 			);
 		$this->factory->get('cat');
