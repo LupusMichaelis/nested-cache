@@ -9,11 +9,11 @@ class Noop
 {
 	public function cast($value)
 	{
-		return $value;
+		return is_object($value) ? clone $value : $value;
 	}
 
 	public function uncast($value)
 	{
-		return $value;
+		return is_object($value) ? clone $value : $value;
 	}
 }
