@@ -148,11 +148,10 @@ class ObjectCacheKeeper
 	private function migrate_group(string $group)
 	{
 		foreach($this->cache_list as $blog_id => $grouped_cache_list)
-			foreach($grouped_cache_list as $name => $cache)
-			{
-				$flavour = $this->is_persistent($group_name) ? 'persistent' : 'ephemeral';
-				$this->cache_list[$blog_id][$group] = $this->cache_factory->get_cache($flavour);
-			}
+		{
+			$flavour = $this->is_persistent($group) ? 'persistent' : 'ephemeral';
+			$this->cache_list[$blog_id][$group] = $this->cache_factory->get_cache($flavour);
+		}
 	}
 
 	private function instantiate_cache_for_group(string $group_name)
