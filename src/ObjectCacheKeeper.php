@@ -61,7 +61,7 @@ class ObjectCacheKeeper
 
 	public function set_persistent_cache_class(string $class_name): void
 	{
-		$this->cache_factory->set('ephemeral', compact('class_name'));
+		$this->cache_factory->add_cache('ephemeral', compact('class_name'));
 	}
 
 	public function get(Key\Cut $key)
@@ -151,7 +151,7 @@ class ObjectCacheKeeper
 			foreach($grouped_cache_list as $name => $cache)
 			{
 				$flavour = $this->is_persistent($group_name) ? 'persistent' : 'ephemeral';
-				$this->cache_list[$blog_id][$group] = $this->cache_factory->get($flavour);
+				$this->cache_list[$blog_id][$group] = $this->cache_factory->get_cache($flavour);
 			}
 	}
 
@@ -161,7 +161,7 @@ class ObjectCacheKeeper
 
 		foreach($this->cache_list as $blog_id => $grouped_cache_list)
 			if(!isset($this->cache_list[$blog_id][$group_name]))
-				$this->cache_list[$blog_id][$group_name] = $this->cache_factory->get($flavour);
+				$this->cache_list[$blog_id][$group_name] = $this->cache_factory->get_cache($flavour);
 	}
 
 	private $default_group_name = WordPress\ObjectCacheInterface::default_group_name;

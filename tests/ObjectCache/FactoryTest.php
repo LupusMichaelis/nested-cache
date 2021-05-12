@@ -24,8 +24,8 @@ class FactoryTest
 
 	public function testDefaults()
 	{
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Apcu::class, $this->factory->get('persistent'));
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\BareArray::class, $this->factory->get('ephemeral'));
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Apcu::class, $this->factory->get_cache('persistent'));
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\BareArray::class, $this->factory->get_cache('ephemeral'));
 	}
 
 	public function testLoggerEnabled()
@@ -39,15 +39,15 @@ class FactoryTest
 				]
 			);
 
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Logger::class, $this->factory->get('persistent'));
-		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Logger::class, $this->factory->get('ephemeral'));
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Logger::class, $this->factory->get_cache('persistent'));
+		$this->assertInstanceOf(\LupusMichaelis\NestedCache\ObjectCache\Logger::class, $this->factory->get_cache('ephemeral'));
 	}
 
 	public function testUnknownFactorable()
 	{
 		$this->expectException(\Exception::class);
 		$this->expectExceptionMessage('Unknown target \'cat\'');
-		$this->factory->get('cat');
+		$this->factory->get_cache('cat');
 	}
 
 	public function testUnsupportedCache()
@@ -61,6 +61,6 @@ class FactoryTest
 					]
 				]
 			);
-		$this->factory->get('cat');
+		$this->factory->get_cache('cat');
 	}
 }
