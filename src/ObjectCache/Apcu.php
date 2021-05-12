@@ -29,12 +29,12 @@ class Apcu
 		if(false === $success)
 			throw new LMNC\NotFound($key);
 
-		return $this->unwrap($value);
+		return $value;
 	}
 
 	public function set(LMNC\Key\Cut $key, $value): void
 	{
-		$success = \apcu_store("$key", $this->wrap($value));
+		$success = \apcu_store("$key", $value);
 
 		if(false === $success)
 			// \apcu_store seems to fail only with non-string non-array keys, as I ensure "$key"
@@ -44,7 +44,7 @@ class Apcu
 
 	public function add(LMNC\Key\Cut $key, $value): void
 	{
-		$success = \apcu_add("$key", $this->wrap($value));
+		$success = \apcu_add("$key", $value);
 
 		if(false === $success)
 			throw new LMNC\AlreadyCached($key);
@@ -90,36 +90,12 @@ class Apcu
 
 	public function delete(LMNC\Key\Cut $key): void
 	{
-		apcu_delete("$key");
+		\apcu_delete("$key");
 	}
 
 	public function flush(): void
 	{
-		apcu_clear_cache();
-	}
-
-	protected function wrap($value)
-	{
-		if(is_object($value))
-		{
-			$glimpse = new \ReflectionObject($value);
-			if($glimpse->isCloneable())
-				$value = clone $value;
-			else
-				$value = serialize($value);
-		}
-
-		return $value;
-	}
-
-	protected function unwrap($cached)
-	{
-		$value =
-			is_string($cached)
-				? @unserialize($cached)
-				: $cached;
-		
-		return false === $value ? $cached : $value;
+		\apcu_clear_cache();
 	}
 
 	private $stats; ///< @property \LupusMichaelis\NestedCache\StatInterface
