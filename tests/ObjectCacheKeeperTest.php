@@ -33,7 +33,7 @@ class ObjectCacheKeeperTest
 	/**
 	 * @dataProvider provideKeys
 	 */
-	public function testChangeGroupWithoutChangingKeepContent($key)
+	public function testChangeGroupWithoutChangingPersistent($key)
 	{
 		$this->cache_keeper->add_group('bundle', true);
 
@@ -44,5 +44,31 @@ class ObjectCacheKeeperTest
 		$this->cache_keeper->add_group('bundle', true);
 		$value = $this->cache_keeper->get($key);
 		$this->assertEquals(42, $value);
+
+		$this->cache_keeper->add_group('bundle', false);
+		$this->expectException(\LupusMichaelis\NestedCache\NotFound::class);
+		$this->expectExceptionMessage('Key (1|bundle|target) not found');
+		$value = $this->cache_keeper->get($key);
+	}
+
+	/**
+	 * @dataProvider provideKeys
+	 */
+	public function testChangeGroupWithoutChangingNonPersistent($key)
+	{
+		$this->cache_keeper->add_group('bundle', false);
+
+		$this->cache_keeper->set($key, 42);
+		$value = $this->cache_keeper->get($key);
+		$this->assertEquals(42, $value);
+
+		$this->cache_keeper->add_group('bundle', false);
+		$value = $this->cache_keeper->get($key);
+		$this->assertEquals(42, $value);
+
+		$this->cache_keeper->add_group('bundle', true);
+		$this->expectException(\LupusMichaelis\NestedCache\NotFound::class);
+		$this->expectExceptionMessage('Key (1|bundle|target) not found');
+		$value = $this->cache_keeper->get($key);
 	}
 }
