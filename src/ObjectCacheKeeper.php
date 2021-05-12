@@ -61,7 +61,7 @@ class ObjectCacheKeeper
 
 	public function set_persistent_cache_class(string $class_name): void
 	{
-		$this->persistent_cache_class = $class_name;
+		$this->cache_factory->set('ephemeral', compact('class_name'));
 	}
 
 	public function get(Key\Cut $key)
