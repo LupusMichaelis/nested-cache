@@ -40,7 +40,20 @@ session-main()
 			;;
 
 		help|--help|-h|'')
-			echo "$0" '[init|release|dev|help|*]'
+			echo "$0"
+			cat <<- 'EOS'
+			Development session helper
+			Anything that's given to this helper will be executed in the developer
+			container, to the exception of those shortcuts:
+
+			  init      initialize environment variables                   (no container)
+			  release   build the release PHAR file                    (builer container)
+			  kill      kill the running development container if any      (no container)
+			  php       access to php CLI, subsequent arguments   (development container)
+			            will be forwarded to php command
+			  help      usage information                                  (no container)
+			EOS
+			echo
 			;;
 		*)
 			session-docker "$@"
@@ -58,23 +71,42 @@ session-docker()
 				docker kill "$cid"
 			fi
 			;;
+		php)
+			case "$2" in
+				prompt)
+					session-docker-run-or-exec "$cid" php -d auto_prepend_file=vendor/autoload.php -a
+					;;
+				syntax)
+					session-docker-run-or-exec "$cid" composer syntax
+					;;
+				*)
+					session-docker-run-or-exec "$cid" "$@"
+			esac
+			;;
 		*)
-			if [ -z "$cid" ]
-			then
-				docker build -t "${image_name_list[dev]}" -f Dockerfile-dev .
-				docker run -it --rm \
-					--env-file "$envfile" \
-					-v$PWD:/home/anvil \
-					--name "${container_name_list[dev]}" \
-					"${image_name_list[dev]}" \
-					"$@"
-			else
-				docker exec -it \
-					-u "$(id -u):$(id -g)" \
-					"${container_name_list[dev]}" \
-					"$@"
-			fi
+			session-docker-run-or-exec "$cid" "$@"
 	esac
+}
+
+session-docker-run-or-exec()
+{
+	local -r cid="$1"; shift
+
+	if [ -z "$cid" ]
+	then
+		docker build -t "${image_name_list[dev]}" -f Dockerfile-dev .
+		docker run -it --rm \
+			--env-file "$envfile" \
+			-v$PWD:/home/anvil \
+			--name "${container_name_list[dev]}" \
+			"${image_name_list[dev]}" \
+			"$@"
+	else
+		docker exec -it \
+			-u "$(id -u):$(id -g)" \
+			"${container_name_list[dev]}" \
+			"$@"
+	fi
 }
 
 session-main "$@"

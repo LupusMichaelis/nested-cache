@@ -34,7 +34,7 @@
             "Composer\\Config::disableProcessTimeout",
             "phpunit-watcher watch ./tests --coverage-html ./public/test-coverage < /dev/tty"
         ],
-        "syntax": "find src -name \\*.php -exec php '{}' \\;",
+        "syntax": "find src -name \\*.php -exec php -d auto_prepend_file=vendor/autoload.php -l '{}' \\;",
         "test": "phpunit ./tests",
         "test-verbose": "@test -vvv",
         "test-coverage": "@test --coverage-html ./public/test-coverage",
