@@ -44,22 +44,21 @@ class ObjectCache
 			);
 	}
 
-	public function set($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
+	public function set($key, $data, string $group = self::default_group_name, int $expires_in = self::default_expires_in): bool
 	{
 		$key = $this->make_key($key, $group);
-
-		$this->keeper->set($key, $data);
+		$this->keeper->set($key, $data, $expires_in);
 
 		return true;
 	}
 
-	public function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
+	public function add($key, $data, string $group = self::default_group_name, int $expires_in = self::default_expires_in): bool
 	{
 		$key = $this->make_key($key, $group);
 
 		try
 		{
-			$this->keeper->add($key, $data);
+			$this->keeper->add($key, $data, $expires_in);
 			return true;
 		}
 		catch(LMNC\AlreadyCached $e)
@@ -82,13 +81,13 @@ class ObjectCache
 			$this->keeper->add_group($group, false);
 	}
 
-	public function replace($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool
+	public function replace($key, $data, string $group = self::default_group_name, int $expires_in = self::default_expires_in): bool
 	{
 		$key = $this->make_key($key, $group);
 
 		try
 		{
-			$this->keeper->replace($key, $data);
+			$this->keeper->replace($key, $data, $expires_in);
 			return true;
 		}
 		catch(LMNC\NotFound $e)

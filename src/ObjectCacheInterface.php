@@ -5,9 +5,9 @@ namespace LupusMichaelis\NestedCache;
 interface ObjectCacheInterface
 {
 	function get(Key\Cut $key);
-	function set(Key\Cut $key, $value): void;
-	function add(Key\Cut $key, $value): void;
-	function replace(Key\Cut $key, $value): void;
+	function set(Key\Cut $key, $value, int $expires_in): void;
+	function add(Key\Cut $key, $value, int $expires_in): void;
+	function replace(Key\Cut $key, $value, int $expires_in): void;
 	function delete(Key\Cut $key): void;
 
 	function increment(Key\Cut $key, int $bump): int;

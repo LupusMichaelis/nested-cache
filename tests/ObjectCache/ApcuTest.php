@@ -51,7 +51,7 @@ class ApcuTest
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
 
-		$this->cache->set($key, 8956);
+		$this->cache->set($key, 8956, 0);
 		$stats = $this->cache->get_stats();
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
@@ -73,7 +73,7 @@ class ApcuTest
 	{
 		$object = new Cloneable;
 
-		$this->cache->set($key, $object);
+		$this->cache->set($key, $object, 0);
 		$cached = $this->cache->get($key);
 
 		$this->assertEquals($object, $cached);
@@ -87,7 +87,7 @@ class ApcuTest
 	{
 		$not_scalar_non_clonable = new \Error('My not clonable error object');
 
-		$this->cache->add($key, $not_scalar_non_clonable);
+		$this->cache->add($key, $not_scalar_non_clonable, 0);
 		$stored_value = $this->cache->get($key);
 		$this->assertEquals($not_scalar_non_clonable, $stored_value);
 	}
@@ -109,14 +109,14 @@ class ApcuTest
 		$value = $this->cache->decrement($key, 10);
 		$this->assertEquals($value, -8);
 
-		$this->cache->set($key, "stop");
+		$this->cache->set($key, "stop", 0);
 		$value = $this->cache->get($key);
 		$this->assertEquals($value, "stop");
 
 		$value = $this->cache->increment($key, 11);
 		$this->assertEquals($value, 11);
 
-		$this->cache->set($key, "stop");
+		$this->cache->set($key, "stop", 0);
 		$value = $this->cache->get($key);
 		$this->assertEquals($value, "stop");
 
@@ -131,8 +131,8 @@ class ApcuTest
 	{
 		$this->expectException(\LupusMichaelis\NestedCache\AlreadyCached::class);
 
-		$this->cache->add($key, 'salmon');
-		$this->cache->add($key, 'trout');
+		$this->cache->add($key, 'salmon', 0);
+		$this->cache->add($key, 'trout', 0);
 	}
 
 	/**
@@ -142,7 +142,7 @@ class ApcuTest
 	{
 		$this->expectException(\Exception::class);
 
-		$this->cache->replace($key, 'salmon');
+		$this->cache->replace($key, 'salmon', 0);
 	}
 
 	/**
@@ -150,13 +150,13 @@ class ApcuTest
 	 */
 	public function testReplaceExisting($key)
 	{
-		$this->cache->add($key, 'trout');
+		$this->cache->add($key, 'trout', 0);
 		$value = $this->cache->get($key);
 		$this->assertEquals($value, 'trout');
 
-		$this->cache->replace($key, 'salmon');
+		$this->cache->replace($key, 'salmon', 0);
 		$value = $this->cache->get($key);
-		$this->assertEquals($value, "salmon");
+		$this->assertEquals($value, 'salmon');
 	}
 
 	public function provideKeys()

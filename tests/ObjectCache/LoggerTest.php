@@ -58,7 +58,7 @@ class LoggerTest
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
 
-		$this->logged_cache->set($key, 8956);
+		$this->logged_cache->set($key, 8956, 0);
 		$stats = $this->logged_cache->get_stats();
 		$this->assertEquals(1, $stats->get_misses());
 		$this->assertEquals(0, $stats->get_hits());
@@ -80,7 +80,7 @@ class LoggerTest
 	{
 		$object = new Cloneable;
 
-		$this->logged_cache->set($key, $object);
+		$this->logged_cache->set($key, $object, 0);
 		$cached = $this->logged_cache->get($key);
 
 		$this->assertEquals($object, $cached);
@@ -94,7 +94,7 @@ class LoggerTest
 	{
 		$not_scalar_non_clonable = new \Error('My not clonable error object');
 
-		$this->logged_cache->add($key, $not_scalar_non_clonable);
+		$this->logged_cache->add($key, $not_scalar_non_clonable, 0);
 		$stored_value = $this->logged_cache->get($key);
 		$this->assertEquals($not_scalar_non_clonable, $stored_value);
 	}
@@ -116,14 +116,14 @@ class LoggerTest
 		$value = $this->logged_cache->decrement($key, 10);
 		$this->assertEquals($value, -8);
 
-		$this->logged_cache->set($key, "stop");
+		$this->logged_cache->set($key, "stop", 0);
 		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, "stop");
 
 		$value = $this->logged_cache->increment($key, 11);
 		$this->assertEquals($value, 11);
 
-		$this->logged_cache->set($key, "stop");
+		$this->logged_cache->set($key, "stop", 0);
 		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, "stop");
 
@@ -138,8 +138,8 @@ class LoggerTest
 	{
 		$this->expectException(\LupusMichaelis\NestedCache\AlreadyCached::class);
 
-		$this->logged_cache->add($key, 'salmon');
-		$this->logged_cache->add($key, 'trout');
+		$this->logged_cache->add($key, 'salmon', 0);
+		$this->logged_cache->add($key, 'trout', 0);
 	}
 
 	/**
@@ -149,7 +149,7 @@ class LoggerTest
 	{
 		$this->expectException(\Exception::class);
 
-		$this->logged_cache->replace($key, 'salmon');
+		$this->logged_cache->replace($key, 'salmon', 0);
 	}
 
 	/**
@@ -157,13 +157,13 @@ class LoggerTest
 	 */
 	public function testReplaceExisting($key)
 	{
-		$this->logged_cache->add($key, 'trout');
+		$this->logged_cache->add($key, 'trout', 0);
 		$value = $this->logged_cache->get($key);
 		$this->assertEquals($value, 'trout');
 
-		$this->logged_cache->replace($key, 'salmon');
+		$this->logged_cache->replace($key, 'salmon', 0);
 		$value = $this->logged_cache->get($key);
-		$this->assertEquals($value, "salmon");
+		$this->assertEquals($value, 'salmon');
 	}
 
 	public function provideKeys()

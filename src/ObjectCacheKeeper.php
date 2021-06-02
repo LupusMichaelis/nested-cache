@@ -70,22 +70,22 @@ class ObjectCacheKeeper
 		return $cache->get($key);
 	}
 
-	public function set(Key\Cut $key, $value): void
+	public function set(Key\Cut $key, $value, int $expires_in): void
 	{
 		$cache = $this->get_cache_for_key($key);
-		$cache->set($key, $value);
+		$cache->set($key, $value, $expires_in);
 	}
 
-	public function add(Key\Cut $key, $value): void
+	public function add(Key\Cut $key, $value, int $expires_in): void
 	{
 		$cache = $this->get_cache_for_key($key);
-		$cache->add($key, $value);
+		$cache->add($key, $value, $expires_in);
 	}
 
-	public function replace(Key\Cut $key, $value): void
+	public function replace(Key\Cut $key, $value, int $expires_in): void
 	{
 		$cache = $this->get_cache_for_key($key);
-		$cache->replace($key, $value);
+		$cache->replace($key, $value, $expires_in);
 	}
 
 	public function increment(Key\Cut $key, int $bump): int

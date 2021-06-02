@@ -32,9 +32,9 @@ class Apcu
 		return $value;
 	}
 
-	public function set(LMNC\Key\Cut $key, $value): void
+	public function set(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
-		$success = \apcu_store("$key", $value);
+		$success = \apcu_store("$key", $value, $expires_in);
 
 		if(false === $success)
 			// \apcu_store seems to fail only with non-string non-array keys, as I ensure "$key"
@@ -42,22 +42,22 @@ class Apcu
 			throw new \Exception(sprintf('Error occured on setting \'%s\'', $key)); // @codeCoverageIgnore
 	}
 
-	public function add(LMNC\Key\Cut $key, $value): void
+	public function add(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
-		$success = \apcu_add("$key", $value);
+		$success = \apcu_add("$key", $value, $expires_in);
 
 		if(false === $success)
 			throw new LMNC\AlreadyCached($key);
 	}
 
-	public function replace(LMNC\Key\Cut $key, $value): void
+	public function replace(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
 		if(!\apcu_exists("$key"))
 			throw new LMNC\NotFound($key);
 
 		/// @fixme Race condition: if the value is deleted in between, the replace contract will be broken
 
-		$this->set($key, $value);
+		$this->set($key, $value, $expires_in);
 	}
 
 	public function increment(LMNC\Key\Cut $key, int $bump): int
@@ -68,7 +68,7 @@ class Apcu
 		if(false === $success)
 		{
 			$value = $bump + LMNC\WordPress\ObjectCacheInterface::default_incrementable_floor;
-			$this->set($key, $value);
+			$this->set($key, $value, LMNC\WordPress\ObjectCacheInterface::default_expires_in);
 		}
 
 		return $value;
@@ -82,7 +82,7 @@ class Apcu
 		if(false === $success)
 		{
 			$value = LMNC\WordPress\ObjectCacheInterface::default_incrementable_floor;
-			$this->set($key, $value);
+			$this->set($key, $value, LMNC\WordPress\ObjectCacheInterface::default_expires_in);
 		}
 
 		return $value;

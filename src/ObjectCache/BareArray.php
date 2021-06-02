@@ -31,7 +31,10 @@ class BareArray
 		return false === $value ? $cached : $value;
 	}
 
-	public function set(LMNC\Key\Cut $key, $value): void
+	/**
+	 * @warning Ignores $expires_in
+	 */
+	public function set(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
 		if(is_object($value))
 		{
@@ -45,20 +48,26 @@ class BareArray
 		$this->cache["$key"] = $value;
 	}
 
-	public function add(LMNC\Key\Cut $key, $value):void
+	/**
+	 * @warning Ignores $expires_in
+	 */
+	public function add(LMNC\Key\Cut $key, $value, int $expires_in):void
 	{
 		if(isset($this->cache["$key"]))
 			throw new LMNC\AlreadyCached($key);
 
-		$this->set($key, $value);
+		$this->set($key, $value, $expires_in);
 	}
 
-	public function replace(LMNC\Key\Cut $key, $value):void
+	/**
+	 * @warning Ignores $expires_in
+	 */
+	public function replace(LMNC\Key\Cut $key, $value, int $expires_in):void
 	{
 		if(!isset($this->cache["$key"]))
 			throw new LMNC\NotFound($key);
 
-		$this->set($key, $value);
+		$this->set($key, $value, $expires_in);
 	}
 
 	public function increment(LMNC\Key\Cut $key, int $bump): int
@@ -72,7 +81,7 @@ class BareArray
 			$value = LMNC\WordPress\ObjectCacheInterface::default_incrementable_floor;
 		}
 		$value += $bump;
-		$this->set($key, $value);
+		$this->set($key, $value, LMNC\WordPress\ObjectCacheInterface::default_expires_in);
 
 		return $value;
 	}
@@ -89,7 +98,7 @@ class BareArray
 		}
 		$value -= $bump;
 		$value = max($value, LMNC\WordPress\ObjectCacheInterface::default_incrementable_floor);
-		$this->set($key, $value);
+		$this->set($key, $value, LMNC\WordPress\ObjectCacheInterface::default_expires_in);
 
 		return $value;
 	}

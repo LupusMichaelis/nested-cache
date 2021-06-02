@@ -27,7 +27,7 @@ class BareArrayTest
 		$not_scalar_non_clonable = new \Error('My not clonable error object');
 		$key = new \LupusMichaelis\NestedCache\Key\Cut(['blog_id' => 1, 'group' => 'group', 'name' => 'target']);
 
-		$this->cache->add($key, $not_scalar_non_clonable);
+		$this->cache->add($key, $not_scalar_non_clonable, 0);
 		$stored_value = $this->cache->get($key);
 		$this->assertEquals($not_scalar_non_clonable, $stored_value);
 	}

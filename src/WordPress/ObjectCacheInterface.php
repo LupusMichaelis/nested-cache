@@ -90,7 +90,7 @@ interface ObjectCacheInterface
 	function add($key, $data, string $group = self::default_group_name, int $expires = self::default_expires_in): bool;
 
 	/**
-	 * @see https://developer.wordpress.org/reference/classes/wp_object_cache/add_non_persistent_groups/
+	 * @see https://developer.wordpress.org/reference/classes/wp_object_cache/replace/
 	 *
 	 * @param $key int|string
 	 * @param $data mixed

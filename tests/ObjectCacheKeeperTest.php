@@ -37,7 +37,7 @@ class ObjectCacheKeeperTest
 	{
 		$this->cache_keeper->add_group('bundle', true);
 
-		$this->cache_keeper->set($key, 42);
+		$this->cache_keeper->set($key, 42, 0);
 		$value = $this->cache_keeper->get($key);
 		$this->assertEquals(42, $value);
 
@@ -58,7 +58,7 @@ class ObjectCacheKeeperTest
 	{
 		$this->cache_keeper->add_group('bundle', false);
 
-		$this->cache_keeper->set($key, 42);
+		$this->cache_keeper->set($key, 42, 0);
 		$value = $this->cache_keeper->get($key);
 		$this->assertEquals(42, $value);
 

@@ -52,22 +52,23 @@ class Logger
 		return $this->monitored->get($key);
 	}
 
-	public function set(LMNC\Key\Cut $key, $value): void
+	public function set(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
-		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", $value);
-		$this->monitored->set($key, $value);
+		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s) expires_in (%d)'
+			, "$key", $value, $expires_in);
+		$this->monitored->set($key, $value, $expires_in);
 	}
 
-	public function add(LMNC\Key\Cut $key, $value): void
+	public function add(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
 		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", $value);
-		$this->monitored->add($key, $value);
+		$this->monitored->add($key, $value, $expires_in);
 	}
 
-	public function replace(LMNC\Key\Cut $key, $value): void
+	public function replace(LMNC\Key\Cut $key, $value, int $expires_in): void
 	{
 		$this->log(__FILE__, __LINE__, __CLASS__, __FUNCTION__, 'key(%s) value(%s)', "$key", $value);
-		$this->monitored->replace($key, $value);
+		$this->monitored->replace($key, $value, $expires_in);
 	}
 
 	public function delete(LMNC\Key\Cut $key): void
