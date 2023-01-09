@@ -22,5 +22,8 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <report>
+          <html outputDirectory="./public/test-coverage" lowUpperBound="80" highLowerBound="90"/>
+        </report>
     </coverage>
 </phpunit>
